@@ -1,0 +1,8 @@
+{
+	"name": "dcompute",
+	"description": "A set of libraries to program CUDA ans OpenCL natively in D",
+	"copyright": "Copyright © 2016, nicholaswilson",
+	"authors": ["nicholaswilson"],
+	"dependencies": {
+	}
+}

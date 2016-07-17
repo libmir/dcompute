@@ -14,11 +14,12 @@
 # Executables
 *.exe
 
+# Code coverage
+*.lst
+
 # DUB
 .dub
 docs.json
 __dummy.html
-docs/
-
-# Code coverage
-*.lst
+*.o
+*.obj
