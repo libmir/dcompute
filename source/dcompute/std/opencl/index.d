@@ -14,5 +14,5 @@ extern(C) ulong get_global_size(uint);
 
 extern(C) ulong get_global_id(uint);
 
-extern(C) uling get_global_offset(uint);
+extern(C) ulong get_global_offset(uint);
 

@@ -2,6 +2,12 @@
 *.o
 *.obj
 
+#
+*.ll
+*.spv
+*.spt
+*.ptx
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
