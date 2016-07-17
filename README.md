@@ -1,5 +1,7 @@
 # dcompute
 
+[![Join the chat at https://gitter.im/thewilsonator/dcompute](https://badges.gitter.im/thewilsonator/dcompute.svg)](https://gitter.im/thewilsonator/dcompute?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ##About
 
 This project is a set of libraries designed to work with a modified ldc to 
