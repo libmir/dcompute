@@ -9,7 +9,7 @@ size_t get_global_offset(uint);
 size_t get_local_size(uint);
 size_t get_enqueued_local_size(uint);
 size_t get_local_id(uint);
-size_t get_num_groups();
+size_t get_num_groups(uint);
 size_t get_group_id(uint);
 size_t get_global_linear_id(uint);
 size_t get_local_linear_id(uint);
