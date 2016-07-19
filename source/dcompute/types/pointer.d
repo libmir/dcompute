@@ -24,7 +24,7 @@ alias SharedPointer(T)      = Pointer!(2,T);
 alias ConstantPointer(T)    = Pointer!(3,T);
 alias GenericPointer(T)     = Pointer!(4,T);
 
-
+//This is a Magic compiler type. DO NOT CHANGE
 struct Pointer(uint p, T) if(p <= Generic)
 {
     T* ptr;
