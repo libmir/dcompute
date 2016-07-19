@@ -14,5 +14,12 @@ There are three main parts
 
 ##Build Instructions
 
-To build DCompute you will need a modified ldc available [here](https://github.com/thewilsonator/ldc/tree/dcompute). In addition you will need Khronos's SPIRV-LLVM (available [here](https://github.com/KhronosGroup/SPIRV-LLVM)) as well as a dmd compatible d compiler and cmake for building ldc.
+To build DCompute you will need a modified ldc available [here](https://github.com/thewilsonator/ldc/tree/dcompute).
+ In addition you will need Khronos's SPIRV-LLVM (available [here](https://github.com/KhronosGroup/SPIRV-LLVM)) (use the spirv-3.8 branch) as well as a dmd compatible d compiler and cmake for building ldc.
+ 
+ ##TODO
+ 
+ Find out what khronos's clang mangles the OpenCL builtins' names to so that we can use the correct ones.
+ 
+ Get D versions of the OpenCL and CUDA APIs so that work can begin on a unified D driver API.
 
