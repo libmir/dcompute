@@ -25,9 +25,12 @@ import cuda = dcompute.std.cuda.index;
  
  Notes:
     *Index.{x,y,z} are bounded by *Dimension.{x,y,z}
-    Use SharedIndex's to index Shared Memory and GlobalIndex's to index
-    Global Memory
-    A Group is the ratio of Global to Shared.
+    Use SharedIndex's to index Shared Memory and GlobalIndex's to index Global Memory
+ 
+    A Group is the ratio of Global to Shared. GroupDimension is NOT the size of a single
+    group, (thats SharedDimension) rather it is the number of groups along e.g 
+    the x dimension. Similarly GroupIndex is how many units of the SharedDimension along
+    a given dimension is.
  */
 pure: nothrow: @nogc:
 
