@@ -1,48 +1,49 @@
 @compute module dcompute.std.cuda.index;
 
 import dcompute.attributes;
+pure: nothrow: @nogc:
 //tid = threadId
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.tid.x")
-int tid_x();
+uint tid_x();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.tid.y")
-int tid_y();
+uint tid_y();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.tid.z")
-int tid_z();
+uint tid_z();
 
 //ntid = blockDim
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.ntid.x")
-int ntid_x();
+uint ntid_x();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.ntid.y")
-int ntid_y();
+uint ntid_y();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.ntid.z")
-int ntid_z();
+uint ntid_z();
 
 //ctaid = blockIdx
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.ctaid.x")
-int ctaid_x();
+uint ctaid_x();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.ctaid.y")
-int ctaid_y();
+uint ctaid_y();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.ctaid.z")
-int ctaid_z();
+uint ctaid_z();
 
 //nctaid = gridDim
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.nctaid.x")
-int nctaid_x();
+uint nctaid_x();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.nctaid.y")
-int nctaid_y();
+uint nctaid_y();
 
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.nctaid.z")
-int nctaid_z();
+uint nctaid_z();
 
 //warpsize
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.warpsize")
-int warpsize();
+uint warpsize();
 
 
