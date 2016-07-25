@@ -1,5 +1,5 @@
 import derelict.opencl.cl;
-import dcompute.driver.ocl.types;
+import dcompute.driver.ocl.raw.types;
 
 enum : int_
 {
