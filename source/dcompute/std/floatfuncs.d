@@ -1,6 +1,6 @@
-@compute module dcompute.std.float;
+@compute module dcompute.std.floatfuncs;
 
-import dcompute.attribute;
+import dcompute.attributes;
 
 /*
  isfinite

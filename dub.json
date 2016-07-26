@@ -1,8 +1,10 @@
 {
 	"name": "dcompute",
-	"description": "A set of libraries to program CUDA ans OpenCL natively in D",
+	"description": "Native Heterogeneous Computing for D",
 	"copyright": "Copyright © 2016, nicholaswilson",
 	"authors": ["nicholaswilson"],
 	"dependencies": {
+        "derelict-cl"  : "~>2.0.0",
+        "derelict-cuda": "~>2.0.1",
 	}
 }

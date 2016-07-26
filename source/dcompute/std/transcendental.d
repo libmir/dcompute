@@ -1,7 +1,6 @@
 @compute module dcompute.std.transcendental;
 
-import dcompute.attribute;
-import dcompute.common.vector;
+import dcompute.attributes;
 
 /*
  acos

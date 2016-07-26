@@ -1,4 +1,4 @@
-@compute module dcompute.std.int;
+@compute module dcompute.std.intfuncs;
 
 import dcompute.attributes;
 
