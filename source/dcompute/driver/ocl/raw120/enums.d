@@ -1,3 +1,4 @@
+module dcompute.driver.ocl.raw120.enums;
 import derelict.opencl.cl;
 import dcompute.driver.ocl.raw120.types;
 

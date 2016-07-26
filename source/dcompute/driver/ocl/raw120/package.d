@@ -1,1 +1,6 @@
-public import dcompute.driver.ocl.raw120.types, dcompute.driver.ocl.raw120.functions, dcompute.driver.ocl.raw120.enums;
+module dcompute.driver.ocl.raw120;
+
+public import dcompute.driver.ocl.raw120.types;
+public import dcompute.driver.ocl.raw120.functions;
+public import dcompute.driver.ocl.raw120.enums;
+public import derelict.opencl.cl;

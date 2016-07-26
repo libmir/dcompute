@@ -1,3 +1,5 @@
+module dcompute.driver.ocl.raw120.types;
+
 import derelict.opencl.cl;
 
 alias bool_ = cl_bool;
