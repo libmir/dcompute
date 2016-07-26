@@ -6,5 +6,6 @@
 	"dependencies": {
         "derelict-cl"  : "~>2.0.0",
         "derelict-cuda": "~>2.0.1",
-	}
+	},
+    "dflags" : ["-mdcompute-targets=ocl-120" , "-vv",  "-oq"]
 }
