@@ -20,8 +20,8 @@ import cuda = dcompute.std.cuda.index;
  SharedDimension.xyz    blockDim                    get_local_size()
  SharedIndex.xyz        threadIdx                   get_local_id()
  
- GlobalIndex.linear
- SharedIndex.linear
+ GlobalIndex.linear     A nasty calcualion          get_global_linear_id()
+ SharedIndex.linear     Ditto                       get_local_linear_id()
  
  Notes:
     *Index.{x,y,z} are bounded by *Dimension.{x,y,z}
