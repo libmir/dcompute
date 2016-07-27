@@ -3,6 +3,11 @@ module dcompute.driver.ocl.dstyle120.queue;
 import dcompute.driver.ocl.raw120;
 import dcompute.driver.ocl.dstyle120.errors;
 import dcompute.driver.ocl.dstyle120.util;
+import dcompute.driver.ocl.dstyle120.context;
+import dcompute.driver.ocl.dstyle120.device;
+import dcompute.driver.ocl.dstyle120.event;
+import dcompute.driver.ocl.dstyle120.kernel;
+
 
 import std.typecons;
 
@@ -14,11 +19,11 @@ struct Queue
     {
         cl_int status;
         scope(exit) status.clEnforce();
-        return clCreateCommandQueue(c,dev,props,&status);
+        return Queue(clCreateCommandQueue(c.raw,dev.raw,cast(ulong)props,&status));
     }
     
     
-    write(T)(cl.mem buffer, T[] data,
+    void write(T)(cl.mem buffer, T[] data,
             Flag!"Blocking" blocking = Yes.Blocking, size_t offset = 0, const cl.event[] waitList = null,
             cl.event* event = null)
     {
@@ -38,7 +43,7 @@ struct Queue
     
     Event enqueueKernel(Kernel kernel,const size_t[] globalWorkSize,
                         const size_t[] globalWorkOffset = null, const size_t[] localWorkSize = null,
-                        const cl.event[] waitList = null)
+                        const cl_event[] waitList = null)
     in
     {
         if(globalWorkOffset)
@@ -49,11 +54,11 @@ struct Queue
     body
     {
         cl_event ev;
-        clEnqueueNDRangeKernel(queue, kernel, globalWorkSize.length.to!uint,
+        clEnqueueNDRangeKernel(raw, kernel.raw, cast(uint)globalWorkSize.length,
                 globalWorkOffset.ptr, globalWorkSize.ptr, localWorkSize.ptr,
                 cast(uint)waitList.length, waitList.ptr, &ev)
                 .clEnforce();
-        return ev;
+        return Event(ev);
     }
     
     //TODO: fill, copy, marker, barrier
