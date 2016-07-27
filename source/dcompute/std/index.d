@@ -37,7 +37,7 @@ pure: nothrow: @nogc:
 struct GlobalDimension
 {
     pragma(inline,true);
-    @property static size_t x()
+    @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_size(0);
@@ -47,7 +47,7 @@ struct GlobalDimension
         return 0;
     }
     pragma(inline,true);
-    @property static size_t y()
+    @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_size(1);
@@ -57,7 +57,7 @@ struct GlobalDimension
         return 0;
     }
     pragma(inline,true);
-    @property static size_t z()
+    @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_size(2);
@@ -71,7 +71,7 @@ struct GlobalDimension
 struct GlobalIndex
 {
     pragma(inline,true);
-    @property static size_t x()
+    @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_id(0);
@@ -81,7 +81,7 @@ struct GlobalIndex
         return 0;
     }
     pragma(inline,true);
-    @property static size_t y()
+    @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_id(1);
@@ -91,7 +91,7 @@ struct GlobalIndex
         return 0;
     }
     pragma(inline,true);
-    @property static size_t z()
+    @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_id(2);
@@ -100,7 +100,7 @@ struct GlobalIndex
         
         return 0;
     }
-    @property static size_t linear()
+    @property static size_t linear()()
     {
         if(__dcompute_reflect(target.OpenCL,200))
             return ocl.get_global_linear_id();
@@ -123,7 +123,7 @@ struct GlobalIndex
 struct GroupDimension
 {
     pragma(inline,true);
-    @property static size_t x()
+    @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_num_groups(0);
@@ -133,7 +133,7 @@ struct GroupDimension
         return 0;
     }
     pragma(inline,true);
-    @property static size_t y()
+    @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_num_groups(1);
@@ -143,7 +143,7 @@ struct GroupDimension
         return 0;
     }
     pragma(inline,true);
-    @property static size_t z()
+    @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_num_groups(2);
@@ -157,7 +157,7 @@ struct GroupDimension
 struct GroupIndex
 {
     pragma(inline,true);
-    @property static size_t x()
+    @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_group_id(0);
@@ -167,7 +167,7 @@ struct GroupIndex
         return 0;
     }
     pragma(inline,true);
-    @property static size_t y()
+    @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_group_id(1);
@@ -177,7 +177,7 @@ struct GroupIndex
         return 0;
     }
     pragma(inline,true);
-    @property static size_t z()
+    @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_group_id(2);
@@ -191,7 +191,7 @@ struct GroupIndex
 struct SharedDimension
 {
     pragma(inline,true);
-    @property static size_t x()
+    @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
         return ocl.get_local_size(0);
@@ -201,7 +201,7 @@ struct SharedDimension
         return 0;
     }
     pragma(inline,true);
-    @property static size_t y()
+    @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
         return ocl.get_local_size(1);
@@ -211,7 +211,7 @@ struct SharedDimension
         return 0;
     }
     pragma(inline,true);
-    @property static size_t z()
+    @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
         return ocl.get_local_size(2);
@@ -225,7 +225,7 @@ struct SharedDimension
 struct SharedIndex
 {
     pragma(inline,true);
-    @property static size_t x()
+    @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
         return ocl.get_local_id(0);
@@ -235,7 +235,7 @@ struct SharedIndex
         return 0;
     }
     pragma(inline,true);
-    @property static size_t y()
+    @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
         return ocl.get_local_id(1);
@@ -245,7 +245,7 @@ struct SharedIndex
         return 0;
     }
     pragma(inline,true);
-    @property static size_t z()
+    @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
         return ocl.get_local_id(2);
@@ -254,7 +254,7 @@ struct SharedIndex
         
         return 0;
     }
-    @property static size_t linear()
+    @property static size_t linear()()
     {
         if(__dcompute_reflect(target.OpenCL,200))
             return ocl.get_local_linear_id();
