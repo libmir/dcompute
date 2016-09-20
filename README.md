@@ -1,8 +1,8 @@
 #dcompute
 
-[![Latest version](https://img.shields.io/dub/v/dcompute.svg)](http://code.dlang.org/packages/mir)
-[![Latest version](https://img.shields.io/github/tag/libmir/dcompute.svg?maxAge=3600)](http://code.dlang.org/packages/mir)
-[![License](https://img.shields.io/dub/l/dcompute.svg)](http://code.dlang.org/packages/mir)
+[![Latest version](https://img.shields.io/dub/v/dcompute.svg)](http://code.dlang.org/packages/dcomput)
+[![Latest version](https://img.shields.io/github/tag/libmir/dcompute.svg?maxAge=3600)](http://code.dlang.org/packages//dcomput)
+[![License](https://img.shields.io/dub/l/dcompute.svg)](http://code.dlang.org/packages//dcomput)
 [![Gitter](https://img.shields.io/gitter/room/libmir/public.svg)](https://gitter.im/libmir/public)
 
 ##About
