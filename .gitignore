@@ -30,3 +30,5 @@ docs.json
 __dummy.html
 *.o
 *.obj
+
+.DS_Store

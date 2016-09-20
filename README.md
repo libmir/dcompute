@@ -1,6 +1,9 @@
 #dcompute
 
-[![Join the chat at https://gitter.im/thewilsonator/dcompute](https://badges.gitter.im/thewilsonator/dcompute.svg)](https://gitter.im/thewilsonator/dcompute?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Latest version](https://img.shields.io/dub/v/dcompute.svg)](http://code.dlang.org/packages/mir)
+[![Latest version](https://img.shields.io/github/tag/libmir/dcompute.svg?maxAge=3600)](http://code.dlang.org/packages/mir)
+[![License](https://img.shields.io/dub/l/dcompute.svg)](http://code.dlang.org/packages/mir)
+[![Gitter](https://img.shields.io/gitter/room/libmir/public.svg)](https://gitter.im/libmir/public)
 
 ##About
 
