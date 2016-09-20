@@ -1,11 +1,12 @@
 {
 	"name": "dcompute",
 	"description": "Native Heterogeneous Computing for D",
-	"copyright": "Copyright © 2016, nicholaswilson",
-	"authors": ["nicholaswilson"],
+	"copyright": "Copyright © 2016, Nicholas Wilson",
+	"authors": ["Nicholas Wilson"],
+    "license": "BSL-1.0",
 	"dependencies": {
         "derelict-cl"  : "~>2.0.0",
         "derelict-cuda": "~>2.0.1",
 	},
-    "dflags" : ["-mdcompute-targets=ocl-120" , "-vv",  "-oq"]
+    "dflags-ldc" : ["-mdcompute-targets=ocl-120" , "-vv",  "-oq"]
 }
