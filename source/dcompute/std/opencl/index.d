@@ -2,13 +2,19 @@
 
 import dcompute.attributes;
 
-//Adapted from https://github.com/KhronosGroup/SPIR-Tools/blob/master/headers/opencl_spir.h under the University of Illinois Open Source
-// License
+// Adapted from
+// https://github.com/KhronosGroup/SPIR-Tools/blob/master/headers/opencl_spir.h
+// under the University of Illinois Open Source License
 
+// For mangling pruposes (Itanium), may need to change to pragma(mangle,"...")
+// if we want to support windows.
 extern(C++):
+
 pure:
 nothrow:
 @nogc:
+
+// These really ought to be intrinsics, but for some reason they aren't.
 
 /**
  * Returns the number of dimensions in use. This is the
