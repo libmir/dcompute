@@ -22,7 +22,7 @@ To build DCompute you will need a modified ldc available [here](https://github.c
  
 ##Getting Started
 
-Please see the [wiki](https://github.com/thewilsonator/dcompute/wiki).
+Please see the [wiki](https://github.com/libmir/dcompute/wiki).
 
 ##TODO
 
