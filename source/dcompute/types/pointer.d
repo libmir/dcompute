@@ -8,6 +8,8 @@
  Private    __private   __local__       thread
  Generic
  
+ DCompute avoids the use of 'local' as it means completely different
+ things in OpenCL and CUDA.
  */
 module dcompute.types.pointer;
 
@@ -18,11 +20,11 @@ enum Shared = 2;
 enum Constant = 3;
 enum Generic = 4;
 
-alias PrivatePointer(T)     = Pointer!(0,T);
-alias GlobalPointer(T)      = Pointer!(1,T);
-alias SharedPointer(T)      = Pointer!(2,T);
-alias ConstantPointer(T)    = Pointer!(3,T);
-alias GenericPointer(T)     = Pointer!(4,T);
+alias PrivatePointer(T)     = Pointer!(Private,T);
+alias GlobalPointer(T)      = Pointer!(Global,T);
+alias SharedPointer(T)      = Pointer!(Shared,T);
+alias ConstantPointer(T)    = Pointer!(Constant,T);
+alias GenericPointer(T)     = Pointer!(Generic,T);
 
 //This is a Magic compiler type. DO NOT CHANGE
 struct Pointer(uint p, T) if(p <= Generic)

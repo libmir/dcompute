@@ -26,7 +26,7 @@ Please see the [wiki](https://github.com/libmir/dcompute/wiki).
 
 ##TODO
 
-Find out what khronos's clang mangles the OpenCL builtins' names to so that we can use the correct ones.
+Generate OpenCL builtins from [here](https://github.com/KhronosGroup/SPIR-Tools/wiki/SPIR-2.0-built-in-functions)
 
 Get D versions of the OpenCL and CUDA APIs so that work can begin on a unified D driver API.
 

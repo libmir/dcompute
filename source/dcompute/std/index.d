@@ -1,10 +1,10 @@
-@compute module dcompute.std.index;
+@compute(deviceOnly) module dcompute.std.index;
 
 import dcompute.attributes;
 import dcompute.reflect;
 
-import ocl  = dcompute.std.opencl.index;
-import cuda = dcompute.std.cuda.index;
+private import ocl  = dcompute.std.opencl.index;
+private import cuda = dcompute.std.cuda.index;
 
 /*
  Index Terminology
@@ -25,12 +25,16 @@ import cuda = dcompute.std.cuda.index;
  
  Notes:
     *Index.{x,y,z} are bounded by *Dimension.{x,y,z}
+ 
     Use SharedIndex's to index Shared Memory and GlobalIndex's to index Global Memory
  
     A Group is the ratio of Global to Shared. GroupDimension is NOT the size of a single
     group, (thats SharedDimension) rather it is the number of groups along e.g 
     the x dimension. Similarly GroupIndex is how many units of the SharedDimension along
     a given dimension is.
+ 
+    By default *Index.linear is the linearisation of 3D memory. Use *Index.linear!N where
+    N is 1, 2 or 3 to use a linearisation of ND memory (for e.g. efficiency/documentation).
  */
 pure: nothrow: @nogc:
 
@@ -41,30 +45,30 @@ struct GlobalDimension
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_size(0);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ntid_x()*cuda.nctaid_x();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_size(1);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ntid_y()*cuda.nctaid_y();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_size(2);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ntid_z()*cuda.nctaid_z();
-        
-        return 0;
+        else
+            assert(0);
     }
 }
 
@@ -75,48 +79,55 @@ struct GlobalIndex
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_id(0);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ctaid_x()*cuda.ntid_x() + cuda.tid_x();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_id(1);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ctaid_y()*cuda.ntid_y() + cuda.tid_y();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_global_id(2);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ctaid_z()*cuda.ntid_z() + cuda.tid_z();
-        
-        return 0;
+        else
+            assert(0);
     }
-    @property static size_t linear()()
+    pragma(inline,true);
+    @property static size_t linearImpl(int dim = 3)()
+    if(dim >= 1 && dim <= 3)
     {
+        static if (dim == 3)
+            return  (z * GlobalDimension.y * GlobalDimension.x) +
+                    (y * GlobalDimension.x) + x;
+        else static if (dim == 2)
+            return (y * GlobalDimension.x) + x;
+        else
+            return x;
+    }
+    pragma(inline,true);
+    @property static size_t linear(int dim = 3)() if(dim >= 1 && dim <= 3)
+    {
+        //Foward to the intrinsic to help memoisation for the comsumer.
         if(__dcompute_reflect(target.OpenCL,200))
             return ocl.get_global_linear_id();
-        if(__dcompute_reflect(target.OpenCL,210))
+        else if(__dcompute_reflect(target.OpenCL,210))
             return ocl.get_global_linear_id();
-        if(__dcompute_reflect(target.OpenCL,220))
+        else if(__dcompute_reflect(target.OpenCL,220))
             return ocl.get_global_linear_id();
-        if(__dcompute_reflect(target.OpenCL,120))
-            return (ocl.get_global_id(2) * ocl.get_global_size(1) * ocl.get_global_size(0))+
-                (ocl.get_global_id(1) * ocl.get_global_size(0)) + ocl.get_global_id(0);
-        if(__dcompute_reflect(target.CUDA,0))
-        {
-            return (z * GlobalDimension.y * GlobalDimension.x)+
-                (y * GlobalDimension.x) + x;
-        }
-        return 0;
+        else
+            return linearImpl!dim;
     }
 }
 
@@ -127,30 +138,30 @@ struct GroupDimension
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_num_groups(0);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.nctaid_x();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_num_groups(1);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.nctaid_y();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_num_groups(2);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.nctaid_z();
-        
-        return 0;
+        else
+            assert(0);
     }
 }
 
@@ -161,30 +172,30 @@ struct GroupIndex
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_group_id(0);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ntid_x();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_group_id(1);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ntid_y();
-        
-        return 0;
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
             return ocl.get_group_id(2);
-        if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(target.CUDA,0))
             return cuda.ntid_z();
-        
-        return 0;
+        else
+            assert(0);
     }
 }
 
@@ -194,31 +205,32 @@ struct SharedDimension
     @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
-        return ocl.get_local_size(0);
-        if(__dcompute_reflect(target.CUDA,0))
-        return cuda.ntid_x();
-        
-        return 0;
+            return ocl.get_local_size(0);
+        else if(__dcompute_reflect(target.CUDA,0))
+            return cuda.ntid_x();
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
-        return ocl.get_local_size(1);
-        if(__dcompute_reflect(target.CUDA,0))
-        return cuda.ntid_y();
-        
-        return 0;
+            return ocl.get_local_size(1);
+        else if(__dcompute_reflect(target.CUDA,0))
+            return cuda.ntid_y();
+        else
+            assert(0);
+
     }
     pragma(inline,true);
     @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
-        return ocl.get_local_size(2);
-        if(__dcompute_reflect(target.CUDA,0))
-        return cuda.ntid_z();
-        
-        return 0;
+            return ocl.get_local_size(2);
+        else if(__dcompute_reflect(target.CUDA,0))
+            return cuda.ntid_z();
+        else
+            assert(0);
     }
 }
 
@@ -228,49 +240,57 @@ struct SharedIndex
     @property static size_t x()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
-        return ocl.get_local_id(0);
-        if(__dcompute_reflect(target.CUDA,0))
-        return cuda.tid_x();
-        
-        return 0;
+            return ocl.get_local_id(0);
+        else if(__dcompute_reflect(target.CUDA,0))
+            return cuda.tid_x();
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t y()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
-        return ocl.get_local_id(1);
-        if(__dcompute_reflect(target.CUDA,0))
-        return cuda.tid_y();
-        
-        return 0;
+            return ocl.get_local_id(1);
+        else if(__dcompute_reflect(target.CUDA,0))
+            return cuda.tid_y();
+        else
+            assert(0);
     }
     pragma(inline,true);
     @property static size_t z()()
     {
         if(__dcompute_reflect(target.OpenCL,0))
-        return ocl.get_local_id(2);
-        if(__dcompute_reflect(target.CUDA,0))
-        return cuda.tid_z();
-        
-        return 0;
+            return ocl.get_local_id(2);
+        else if(__dcompute_reflect(target.CUDA,0))
+            return cuda.tid_z();
+        else
+            assert(0);
     }
-    @property static size_t linear()()
+    pragma(inline,true);
+    @property static size_t linearImpl(int dim = 3)()
+    if(dim >= 1 && dim <= 3)
     {
+        static if (dim == 3)
+            return  (z * SharedDimension.y * SharedDimension.x) +
+                    (y * SharedDimension.x) + x;
+        else static if (dim == 2)
+                return (y * SharedDimension.x) + x;
+        else
+            return x;
+
+    }
+    pragma(inline,true);
+    @property static size_t linear(int dim = 3)() if(dim >= 1 && dim <= 3)
+    {
+        //Foward to the intrinsic to help memoisation for the comsumer.
         if(__dcompute_reflect(target.OpenCL,200))
             return ocl.get_local_linear_id();
-        if(__dcompute_reflect(target.OpenCL,210))
+        else if(__dcompute_reflect(target.OpenCL,210))
             return ocl.get_local_linear_id();
-        if(__dcompute_reflect(target.OpenCL,220))
+        else if(__dcompute_reflect(target.OpenCL,220))
             return ocl.get_local_linear_id();
-        if(__dcompute_reflect(target.OpenCL,120))
-        return (z * SharedDimension.y * SharedDimension.x)+
-                (y * SharedDimension.x) + x;
-        if(__dcompute_reflect(target.CUDA,0))
-        {
-            return (z * SharedDimension.y * SharedDimension.x)+
-            (y * SharedDimension.x) + x;
-        }
-        return 0;
+        else
+            return linearImpl!dim;
         
     }
 }

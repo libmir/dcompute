@@ -1,6 +1,6 @@
-@compute module dcompute.std.sync;
+@compute(deviceOnly) module dcompute.std.sync;
 
-import dcompute.attributes;
+import ldc.attributes;
 import dcompute.reflect;
 
 import ocl  = dcompute.std.opencl.sync;

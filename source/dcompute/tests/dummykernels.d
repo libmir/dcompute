@@ -1,11 +1,11 @@
 @compute module dcompute.dummykernels;
-
+pragma(LDC_no_moduleinfo);
 import dcompute.attributes;
 import dcompute.types.pointer;
 import dcompute.reflect;
 import dcompute.std.index;
 
-@kernel void lfgsf( Pointer!(1,float) a,  Pointer!(1,float) b, float c )
+@kernel void lfgsf( Pointer!(2,float) a,  Pointer!(2,float) b, float c )
 {
     auto i = GlobalIndex.x;
     a[i] = b[i] +c;

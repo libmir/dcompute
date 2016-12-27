@@ -1,6 +1,6 @@
 @compute module dcompute.std.pack;
 
-import dcompute.attributes;
+import ldc.attributes;
 //Unpacking functions
 /*
 float4 unorm4x8_to_float(uint x);
