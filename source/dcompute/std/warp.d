@@ -11,4 +11,9 @@ import ldc.attributes;
  * T shuffle(T val, int lane, int width=warpsize)
  * T shuffle_{up,down}(T val, uint lane_delta,int width=warpsize)
  * T shuffle_xor(T val, int lane_mask,int width=warpsize)
+ *
+ *Reduction:
+ * T reduce!op(T val)
+ * T inclusive_scan!op(T val)
+ * T exclusive_scan!op(T val)
  */

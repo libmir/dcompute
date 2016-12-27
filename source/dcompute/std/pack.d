@@ -1,4 +1,4 @@
-@compute module dcompute.std.pack;
+@compute(hostAndDevice) module dcompute.std.pack;
 
 import ldc.attributes;
 //Unpacking functions
