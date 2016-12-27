@@ -1,6 +1,6 @@
-@compute module dcompute.std.intfuncs;
+@compute(hostAndDevice) module dcompute.std.integer;
 
-import dcompute.attributes;
+import ldc.attributes;
 
 /*
  brev - bit reverse
