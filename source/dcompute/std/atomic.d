@@ -1,4 +1,4 @@
-@compute(hostAndDevice) module dcompute.std.warp;
+@compute(CompileFor.hostAndDevice) module dcompute.std.atomic;
 
 import ldc.attributes;
 

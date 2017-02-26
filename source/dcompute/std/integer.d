@@ -1,4 +1,4 @@
-@compute(hostAndDevice) module dcompute.std.integer;
+@compute(CompileFor.hostAndDevice) module dcompute.std.integer;
 
 import ldc.attributes;
 

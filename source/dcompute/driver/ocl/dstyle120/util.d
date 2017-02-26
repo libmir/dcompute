@@ -19,6 +19,13 @@ if(isInputRange!R && hasLength!R && !is(R : T[], T))
     return r.length * (ElementType!R).sizeof;
 }
 
+T[Args.length + 1] propertyList(T,Args...)(Args args)
+{
+    T[Args.length + 1] props;
+    foreach(i, arg; args)
+    props[i] = *cast(T*)(&arg);
+    return props;
+}
 
 struct EnumAndReturnType(alias flag_, ReturnT_, alias handler_ = null)
 {

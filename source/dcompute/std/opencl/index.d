@@ -1,6 +1,6 @@
-@compute module dcompute.std.opencl.index;
+@compute(CompileFor.deviceOnly) module dcompute.std.opencl.index;
 
-import dcompute.attributes;
+import ldc.attributes;
 
 // Adapted from
 // https://github.com/KhronosGroup/SPIR-Tools/blob/master/headers/opencl_spir.h

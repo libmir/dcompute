@@ -1,9 +1,10 @@
 //contains the pseudo conditional compilation function
-
+@compute(CompileFor.hostAndDevice)
 module dcompute.reflect;
 
+import ldc.attributes;
 // These numbers MUST match DcomputeTarget::target in LDC. 
-enum target : uint
+enum ReflectTarget : uint
 {
     Host = 0,
     OpenCL = 1,
