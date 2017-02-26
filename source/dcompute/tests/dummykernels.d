@@ -1,6 +1,6 @@
-@compute module dcompute.dummykernels;
+@compute(CompileFor.deviceOnly) module dcompute.dummykernels;
 pragma(LDC_no_moduleinfo);
-import dcompute.attributes;
+import ldc.attributes;
 import dcompute.types.pointer;
 import dcompute.reflect;
 import dcompute.std.index;

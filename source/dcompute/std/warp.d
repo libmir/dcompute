@@ -1,4 +1,4 @@
-@compute(deviceOnly) module dcompute.std.warp;
+@compute(CompileFor.deviceOnly) module dcompute.std.warp;
 
 import ldc.attributes;
 /*Warp functions

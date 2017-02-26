@@ -1,6 +1,6 @@
-@compute(deviceOnly) module dcompute.std.index;
+@compute(CompileFor.hostAndDevice) module dcompute.std.index;
 
-import dcompute.attributes;
+import ldc.attributes;
 import dcompute.reflect;
 
 private import ocl  = dcompute.std.opencl.index;
@@ -43,9 +43,9 @@ struct GlobalDimension
     pragma(inline,true);
     @property static size_t x()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_global_size(0);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_x()*cuda.nctaid_x();
         else
             assert(0);
@@ -53,9 +53,9 @@ struct GlobalDimension
     pragma(inline,true);
     @property static size_t y()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_global_size(1);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_y()*cuda.nctaid_y();
         else
             assert(0);
@@ -63,9 +63,9 @@ struct GlobalDimension
     pragma(inline,true);
     @property static size_t z()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_global_size(2);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_z()*cuda.nctaid_z();
         else
             assert(0);
@@ -77,9 +77,9 @@ struct GlobalIndex
     pragma(inline,true);
     @property static size_t x()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_global_id(0);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_x()*cuda.ntid_x() + cuda.tid_x();
         else
             assert(0);
@@ -87,9 +87,9 @@ struct GlobalIndex
     pragma(inline,true);
     @property static size_t y()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_global_id(1);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_y()*cuda.ntid_y() + cuda.tid_y();
         else
             assert(0);
@@ -97,9 +97,9 @@ struct GlobalIndex
     pragma(inline,true);
     @property static size_t z()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_global_id(2);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_z()*cuda.ntid_z() + cuda.tid_z();
         else
             assert(0);
@@ -136,9 +136,9 @@ struct GroupDimension
     pragma(inline,true);
     @property static size_t x()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_num_groups(0);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.nctaid_x();
         else
             assert(0);
@@ -146,9 +146,9 @@ struct GroupDimension
     pragma(inline,true);
     @property static size_t y()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_num_groups(1);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.nctaid_y();
         else
             assert(0);
@@ -156,9 +156,9 @@ struct GroupDimension
     pragma(inline,true);
     @property static size_t z()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_num_groups(2);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.nctaid_z();
         else
             assert(0);
@@ -170,9 +170,9 @@ struct GroupIndex
     pragma(inline,true);
     @property static size_t x()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_group_id(0);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_x();
         else
             assert(0);
@@ -180,9 +180,9 @@ struct GroupIndex
     pragma(inline,true);
     @property static size_t y()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_group_id(1);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_y();
         else
             assert(0);
@@ -190,9 +190,9 @@ struct GroupIndex
     pragma(inline,true);
     @property static size_t z()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_group_id(2);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_z();
         else
             assert(0);
@@ -204,9 +204,9 @@ struct SharedDimension
     pragma(inline,true);
     @property static size_t x()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_local_size(0);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_x();
         else
             assert(0);
@@ -214,9 +214,9 @@ struct SharedDimension
     pragma(inline,true);
     @property static size_t y()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_local_size(1);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_y();
         else
             assert(0);
@@ -225,9 +225,9 @@ struct SharedDimension
     pragma(inline,true);
     @property static size_t z()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_local_size(2);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_z();
         else
             assert(0);
@@ -239,9 +239,9 @@ struct SharedIndex
     pragma(inline,true);
     @property static size_t x()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_local_id(0);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.tid_x();
         else
             assert(0);
@@ -249,9 +249,9 @@ struct SharedIndex
     pragma(inline,true);
     @property static size_t y()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_local_id(1);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.tid_y();
         else
             assert(0);
@@ -259,9 +259,9 @@ struct SharedIndex
     pragma(inline,true);
     @property static size_t z()()
     {
-        if(__dcompute_reflect(target.OpenCL,0))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_local_id(2);
-        else if(__dcompute_reflect(target.CUDA,0))
+        else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.tid_z();
         else
             assert(0);
@@ -283,11 +283,11 @@ struct SharedIndex
     @property static size_t linear(int dim = 3)() if(dim >= 1 && dim <= 3)
     {
         //Foward to the intrinsic to help memoisation for the comsumer.
-        if(__dcompute_reflect(target.OpenCL,200))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,200))
             return ocl.get_local_linear_id();
-        else if(__dcompute_reflect(target.OpenCL,210))
+        else if(__dcompute_reflect(ReflectTarget.OpenCL,210))
             return ocl.get_local_linear_id();
-        else if(__dcompute_reflect(target.OpenCL,220))
+        else if(__dcompute_reflect(ReflectTarget.OpenCL,220))
             return ocl.get_local_linear_id();
         else
             return linearImpl!dim;

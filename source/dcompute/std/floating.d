@@ -1,4 +1,4 @@
-@compute(hostAndDevice) module dcompute.std.floating;
+@compute(CompileFor.hostAndDevice) module dcompute.std.floating;
 
 import ldc.attributes;
 

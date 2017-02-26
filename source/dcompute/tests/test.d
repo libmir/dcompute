@@ -1,7 +1,7 @@
-@compute
+@compute(CompileFor.deviceOnly)
 module dcompute.tests.test;
 
-import dcompute.attributes;
+import ldc.attributes;
 import dcompute.types.pointer;
 import dcompute.std.index;
 import std.traits;

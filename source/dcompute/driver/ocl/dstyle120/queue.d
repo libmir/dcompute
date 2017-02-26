@@ -61,7 +61,7 @@ struct Queue
         return Event(ev);
     }
     
-    //TODO: fill, copy, marker, barrier
+    //TODO: fill, copy, marker, barrier [, rectFill, rect Copy]
 
     
 }
