@@ -17,8 +17,8 @@ There are three main parts
 
 ##Build Instructions
 
-To build DCompute you will need a modified ldc available [here](https://github.com/thewilsonator/ldc/tree/dcompute).
- In addition you will need Khronos's SPIRV-LLVM (available [here](https://github.com/KhronosGroup/SPIRV-LLVM)) (use the spirv-3.8 branch) as well as a dmd compatible d compiler and cmake for building ldc.
+To build DCompute you will need a modified ldc available [here](https://github.com/ldc-developers/ldc/tree/dcompute).
+ In addition you will need a SPIRV capable LLVM (available [here](https://github.com/thewilsonator/llvm/tree/compute) as well as a dmd compatible d compiler and cmake for building ldc.
  
 ##Getting Started
 
