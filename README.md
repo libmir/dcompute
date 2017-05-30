@@ -7,8 +7,8 @@
 
 ## About
 
-This project is a set of libraries designed to work with a modified ldc to 
-enable native execution of D on GPUs (and other more exotic targets of OpenCL such as FPGAs DSPs, hereafter just 'GPUs').
+This project is a set of libraries designed to work with ldc[1] to 
+enable native execution of D on GPUs (and other more exotic targets of OpenCL such as FPGAs DSPs, hereafter just 'GPUs') on the OpenCL and CUDA runtimes.
 
 There are three main parts 
 * A standard library 'std' containing standard functionality for targetting GPUs, an abstraction layer over the intrinsics.
@@ -17,9 +17,14 @@ There are three main parts
 
 ## Build Instructions
 
-To build DCompute you will need to use [ldc](https://github.com/ldc-developers/ldc) as the D dcompiler.
-In addition you will need a SPIRV capable LLVM (available [here](https://github.com/thewilsonator/llvm/tree/compute) to support SPIRV.
-NVPTX sould work with any LLVM 3.9.1 or greater. A dmd compatible d compiler,[dmd](https://github.com/dlang/dmd), ldmd or gdmd (available as part of [ldc](https://github.com/ldc-developers/ldc) and [gdc](https://github.com/D-Programming-GDC/GDC) respectively) and cmake for building ldc is also required if you build it yourself.
+To build DCompute you will need:
+* ldc[1] as the D dcompiler.
+* a SPIRV capable LLVM (available [here](https://github.com/thewilsonator/llvm/tree/compute) to build ldc to to support SPIRV (required for OpenCL).
+* or LDC built with any LLVM 3.9.1 or greater that has the NVPTX backend enabled, to support CUDA.
+* [dub](https://github.com/dlang/dub)
+and then just run `$dub build` or add `"dcompute": "~>0.0.1"` to your `dub.json` or `dependency "dcompute" version="~>0.0.1"` to your `dub.sdl`.
+
+A dmd compatible d compiler,[dmd](https://github.com/dlang/dmd), ldmd or gdmd (available as part of ldc[1] and [gdc](https://github.com/D-Programming-GDC/GDC) respectively), and cmake for building ldc is also required if you need to build ldc yourself.
  
 ## Getting Started
 
@@ -32,3 +37,5 @@ Generate OpenCL builtins from [here](https://github.com/KhronosGroup/SPIR-Tools/
 Get D versions of the OpenCL and CUDA APIs so that work can begin on a unified D driver API.
 
 Add code examples to the readme.
+
+[1]: https://github.com/ldc-developers/ldc
