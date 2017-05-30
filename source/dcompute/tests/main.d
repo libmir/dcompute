@@ -1,5 +1,5 @@
 import dcompute.tests.test;
-import dcompute.types.pointer;
+
 import std.stdio;
 import std.traits;
 import std.meta;
