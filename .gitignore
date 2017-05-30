@@ -2,7 +2,7 @@
 *.o
 *.obj
 
-#
+# Other outputs from LLVM
 *.ll
 *.spv
 *.spt
@@ -28,7 +28,5 @@
 .dub
 docs.json
 __dummy.html
-*.o
-*.obj
 
 .DS_Store
