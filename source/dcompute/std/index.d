@@ -1,7 +1,6 @@
 @compute(CompileFor.hostAndDevice) module dcompute.std.index;
 
-import ldc.attributes;
-import dcompute.reflect;
+import ldc.dcompute;
 
 private import ocl  = dcompute.std.opencl.index;
 private import cuda = dcompute.std.cuda.index;

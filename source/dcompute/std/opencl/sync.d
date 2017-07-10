@@ -1,6 +1,6 @@
 @compute(CompileFor.deviceOnly) module dcompute.std.opencl.sync;
 
-import ldc.attributes;
+import ldc.dcompute;
 
 extern(C) void barrier();
 

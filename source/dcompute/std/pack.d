@@ -1,6 +1,6 @@
 @compute(CompileFor.hostAndDevice) module dcompute.std.pack;
 
-import ldc.attributes;
+import ldc.dcompute;
 //Unpacking functions
 /*
 float4 unorm4x8_to_float(uint x);

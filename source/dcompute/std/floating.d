@@ -1,6 +1,6 @@
 @compute(CompileFor.hostAndDevice) module dcompute.std.floating;
 
-import ldc.attributes;
+import ldc.dcompute;
 
 /*
  *Intrinsic

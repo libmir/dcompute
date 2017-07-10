@@ -1,6 +1,6 @@
 @compute(CompileFor.deviceOnly) module dcompute.std.cuda.sync;
 
-import ldc.attributes;
+import ldc.dcompute;
 
 pragma(LDC_intrinsic, "llvm.nvvm.barrier0")
 void barrier0();

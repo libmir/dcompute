@@ -1,6 +1,6 @@
 @compute(CompileFor.deviceOnly) module dcompute.std.warp;
 
-import ldc.attributes;
+import ldc.dcompute;
 /*Warp functions
  *Vote:
  * int  any(int pred) - true if any lanes `pred` is true
