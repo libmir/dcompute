@@ -10,3 +10,12 @@ import dcompute.std.index;
     auto i = GlobalIndex.x;
     a[i] = b[i] +c;
 }
+
+alias aagf = AutoIndexed!(GlobalPointer!(float));
+
+@kernel void auto_index_test(aagf a,
+                             aagf b,
+                             aagf c)
+{
+    a = b + c;
+}
