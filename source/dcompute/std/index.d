@@ -1,7 +1,6 @@
 @compute(CompileFor.hostAndDevice) module dcompute.std.index;
 
-import ldc.attributes;
-import dcompute.reflect;
+import ldc.dcompute;
 
 private import ocl  = dcompute.std.opencl.index;
 private import cuda = dcompute.std.cuda.index;
@@ -120,11 +119,11 @@ struct GlobalIndex
     @property static size_t linear(int dim = 3)() if(dim >= 1 && dim <= 3)
     {
         //Foward to the intrinsic to help memoisation for the comsumer.
-        if(__dcompute_reflect(target.OpenCL,200))
+        if(__dcompute_reflect(ReflectTarget.OpenCL,200))
             return ocl.get_global_linear_id();
-        else if(__dcompute_reflect(target.OpenCL,210))
+        else if(__dcompute_reflect(ReflectTarget.OpenCL,210))
             return ocl.get_global_linear_id();
-        else if(__dcompute_reflect(target.OpenCL,220))
+        else if(__dcompute_reflect(ReflectTarget.OpenCL,220))
             return ocl.get_global_linear_id();
         else
             return linearImpl!dim;
@@ -295,3 +294,30 @@ struct SharedIndex
     }
 }
 
+private import std.traits;
+struct AutoIndexed(T) //if (isInstanceOf(T,Pointer))
+{
+    T p = void;
+    enum  n = TemplateArgsOf!(T)[0];
+    alias U = TemplateArgsOf!(T)[1];
+    static assert(n == AddrSpace.Global || n == AddrSpace.Shared);
+    
+    @property U index()
+    {
+        static if (n == AddrSpace.Global)
+            return p[GlobalIndex.linear];
+        else static if (n == AddrSpace.Shared)
+            return p[SharedIndex.linear];
+
+    }
+    
+    @property void index(U t)
+    {
+        static if (n == AddrSpace.Global)
+            p[GlobalIndex.linear] = t;
+        else static if (n == AddrSpace.Shared)
+            p[SharedIndex.linear] = t;
+    }
+    @disable this();
+    alias index this;
+}

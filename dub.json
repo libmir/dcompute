@@ -8,5 +8,5 @@
         "derelict-cl"  : "~>2.0.0",
         "derelict-cuda": "~>2.0.1",
 	},
-    "dflags-ldc" : ["-mdcompute-targets=ocl-120" , "-vv",  "-oq"]
+    "dflags" : ["-mdcompute-targets=cuda-350" , "-vv","-release",  "-oq", "-betterC"]
 }

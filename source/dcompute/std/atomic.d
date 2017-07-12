@@ -1,6 +1,6 @@
 @compute(CompileFor.hostAndDevice) module dcompute.std.atomic;
 
-import ldc.attributes;
+import ldc.dcompute;
 
 /*
  *Atomic:
