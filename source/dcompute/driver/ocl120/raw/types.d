@@ -1,6 +1,6 @@
-module dcompute.driver.ocl.raw120.types;
+module dcompute.driver.ocl120.raw.types;
 
-import derelict.opencl.cl;
+import dcompute.driver.ocl120;
 
 alias bool_ = cl_bool;
 alias char_   = cl_char;

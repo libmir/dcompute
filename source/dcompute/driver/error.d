@@ -107,7 +107,7 @@ enum Status : int {
     invalidDevicePartitionCount    = -68,
     
     invalidGLSharegroupReference   = -1000,
-    platformNotFound               = -1001;
+    platformNotFound               = -1001,
     invalidD3D10Device             = -1002,
     invalidD3D10Resource           = -1003,
     D3D10ResouceAlreayAcquired     = -1004,
@@ -129,11 +129,52 @@ enum Status : int {
 
 version (D_BetterC)
 {
-    void function(Status) nothrow @nogc onDriverError ;
+    void function(Status) nothrow @nogc onDriverError = _defaultOnDriverError;
+    void _defaultOnDriverError(Status _status) nothrow @nogc
+    {
+        import core.stdc.stdio;
+        import std.conv : to;
+        fprintf(stderr,"*** DCompute driver error:%s", _status.to!(string).toStringz);
+    }
 }
 else
 {
+    class DComputeDriverException : Exception
+    {
+        this(string msg, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
+        {
+            super(msg, file, line, next);
+        }
+        
+        this(Status err, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
+        {
+            import std.conv : to;
+            super(err.to!string, file, line, next);
+        }
+    }
     void function(Status) onDriverError;
+    void _defaultOnDriverError(Status _status)
+    {
+        throw new DComputeDriverException(_status);
+    }
 }
 // Thread local status
 Status status;
+
+version(DComputeIgnoreDriverErrors)
+{
+    void checkErrors() {}
+}
+else
+{
+    void checkErrors()
+    {
+        if (status) onDriverError(status);
+    }
+
+}
+
+
+
+
+

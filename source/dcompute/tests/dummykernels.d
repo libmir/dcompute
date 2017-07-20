@@ -1,5 +1,5 @@
 @compute(CompileFor.deviceOnly)
-module dcompute.dummykernels;
+module dcompute.tests.dummykernels;
 pragma(LDC_no_moduleinfo);
 
 import ldc.dcompute;
