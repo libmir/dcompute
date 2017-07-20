@@ -2,12 +2,12 @@ module dcompute.driver.ocl120.raw.enums;
 
 import dcompute.driver.ocl120;
 
-enum : profiling_info
+enum //: profiling_info
 {
-    PROFILING_COMMAND_QUEUED                 = profiling_info(0x1280),
-    PROFILING_COMMAND_SUBMIT                 = profiling_info(0x1281),
-    PROFILING_COMMAND_START                  = profiling_info(0x1282),
-    PROFILING_COMMAND_END                    = profiling_info(0x1283),
+    PROFILING_COMMAND_QUEUED = 0x1280,
+    PROFILING_COMMAND_SUBMIT = 0x1281,
+    PROFILING_COMMAND_START  = 0x1282,
+    PROFILING_COMMAND_END    = 0x1283,
 }
 
 // device_partition_property_ext extension
@@ -43,9 +43,9 @@ enum
 // device_partition_property_ext list terminators
 enum
 {
-    PROPERTIES_LIST_END_EXT                  = (cast(device_partition_property_ext) 0),
-    PARTITION_BY_COUNTS_LIST_END_EXT         = (cast(device_partition_property_ext) 0),
-    PARTITION_BY_NAMES_LIST_END_EXT          = (cast(device_partition_property_ext) 0 - 1),
+    PROPERTIES_LIST_END_EXT          =  0,
+    PARTITION_BY_COUNTS_LIST_END_EXT =  0,
+    PARTITION_BY_NAMES_LIST_END_EXT  =  0 - 1,
 }
 
 

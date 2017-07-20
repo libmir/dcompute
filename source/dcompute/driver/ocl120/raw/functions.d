@@ -6,7 +6,7 @@ module dcompute.driver.ocl120.raw.functions;
 import dcompute.driver.ocl120;
 //nothrow: @nogc:
 
-
+/*
 auto getEventProfilingInfo(event a, profiling_info b, size_t c, void* d, size_t* e)
 {
     debug assert(clGetEventProfilingInfo);
@@ -305,4 +305,4 @@ auto getExtensionFunctionAddressForPlatform(platform_id a, const(char*) b)
     auto ret = cast(void*)clGetExtensionFunctionAddressForPlatform(cast(cl_platform_id)a, cast(const(char*))b);
     return ret;
 }
-
+*/
