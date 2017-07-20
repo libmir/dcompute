@@ -92,7 +92,7 @@ struct Queue
         {
             Queue q;
             const size_t[] globalWorkSize, globalWorkOffset,localWorkSize;
-    const Event[] waitList;
+            const Event[] waitList;
             this(Queue _q,const size_t[] a, const size_t[] b, const size_t[] c, const Event[] d)
             {
                 q = _q;
