@@ -26,8 +26,9 @@ int main(string[] args)
     auto queue    = context.createQueue(devices[0],Queue.Properties.outOfOrderExecution);
     auto data     = somedata();
     auto buf      = context.createBuffer!(float)(Memory.Flags.none,data);
-    queue.enqueue!(saxpy)([5])(buf,buf,buf);
-    
+    Event e = queue.enqueue!(saxpy)([5])(buf,buf,42.0);
+    e.wait();
+    return 0;
 }
 
 
