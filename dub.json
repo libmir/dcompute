@@ -7,6 +7,7 @@
 	"dependencies": {
         "derelict-cl"  : "~>2.0.0",
         "derelict-cuda": "~>2.0.1",
+        "taggedalgebraic": "~>0.10.7"
 	},
     "dflags" : ["-mdcompute-targets=cuda-350" , "-vv", "-oq", "-betterC"]
 }
