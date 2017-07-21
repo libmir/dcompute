@@ -58,18 +58,6 @@ struct Program
         return ret;
     }
     
-    /*Kernel!(void)[] getAllKernels(A)(A allocator)
-    {
-        uint len;
-        clCreateKernelsInProgram(this.raw,0,null,&len);
-        Kernel!(void)[] ret = allocator.makeArray!(Kernel!(void))(len);
-        status = clCreateKernelsInProgram(this.raw,
-                                          ret.length,cast(cl_kernel*)ret.ptr,
-                                          null);
-        chaeckErrors();
-        return ret;
-    }*/
-    
 }
 
 

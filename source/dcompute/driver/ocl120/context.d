@@ -3,6 +3,8 @@ module dcompute.driver.ocl120.context;
 import dcompute.driver.ocl120;
 import std.typecons;
 
+import std.experimental.allocator.typed;
+
 struct Context
 {
     cl_context raw;
@@ -115,13 +117,12 @@ struct Context
      }
     */
     
-    Program createProgramFromSPIR(A)(A allocator, Device[] devices,ubyte[] spir)
+    Program createProgramFromSPIR(A)(A a, Device[] devices,ubyte[] spir)
     {
-        //auto lengths = allocator.makeArray!(size_t)(devices.length);
-        auto lengths = new size_t[devices.length];
+        auto allocator = TypedAllocator!(A)(a);
+        auto lengths = allocator.makeArray!(size_t)(devices.length);
         lengths[]    = spir.length;
-        //auto ptrs  = allocator.makeArray!(ubyte*)(devices.length);
-        auto ptrs    = new ubyte*[devices.length];
+        auto ptrs  = allocator.makeArray!(ubyte*)(devices.length);
         ptrs[]       = spir.ptr;
         Program ret;
 
@@ -131,8 +132,8 @@ struct Context
                                 lengths.ptr,ptrs.ptr,
                                 null, // TODO report individual errors
                                 cast(int*)&status);
-        //allocator.dispose(lengths);
-        //allocator.dispose(prts);
+        allocator.dispose(lengths);
+        allocator.dispose(ptrs);
         return ret;
     }
     
