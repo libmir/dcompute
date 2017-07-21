@@ -110,7 +110,7 @@ enum Status : int {
     platformNotFound               = -1001,
     invalidD3D10Device             = -1002,
     invalidD3D10Resource           = -1003,
-    D3D10ResouceAlreayAcquired     = -1004,
+    D3D10ResouceAlreadyAcquired    = -1004,
     D3D10ResourceNotAcquires       = -1005,
     invalidD3D11Device             = -1006,
     invalidD3D11Resource           = -1007,
@@ -120,21 +120,28 @@ enum Status : int {
     invalidDX9MediaSurface         = -1011,
     DX9MediaSurfaceAlreadyAcquired = -1012,
     DX9MediaSurfaceNotAcquired     = -1013,
+    
     devicePartitionFailed          = -1057,
     invalidPartitionCount          = -1058,
     invalidPartitionName           = -1059,
+    
     invalidEGLObject               = -1093,
     EGLResourceNotAcquired         = -1092,
 }
 
 version (D_BetterC)
 {
-    void function(Status) nothrow @nogc onDriverError = _defaultOnDriverError;
+    void delegate (Status) nothrow @nogc onDriverError =
+                  (Status _status) => _defaultOnDriverError(_status);
+    immutable defaultOnDriverError =
+                  (Status _status) => _defaultOnDriverError(_status);
+
     void _defaultOnDriverError(Status _status) nothrow @nogc
     {
-        import core.stdc.stdio;
+        import core.stdc.stdio : stderr;
         import std.conv : to;
-        fprintf(stderr,"*** DCompute driver error:%s", _status.to!(string).toStringz);
+        fprintf(stderr,"*** DCompute driver error:%s\n",
+                _status.to!(string).toStringz);
     }
 }
 else
@@ -152,12 +159,17 @@ else
             super(err.to!string, file, line, next);
         }
     }
-    void function(Status) onDriverError;
+    void delegate(Status) onDriverError =
+                 (Status _status) => _defaultOnDriverError(_status);
+    immutable defaultOnDriverError =
+                 (Status _status) => _defaultOnDriverError(_status);
+
     void _defaultOnDriverError(Status _status)
     {
         throw new DComputeDriverException(_status);
     }
 }
+
 // Thread local status
 Status status;
 
