@@ -1,4 +1,4 @@
-module dcompute.driver.ocl.dstyle120.util;
+module dcompute.driver.ocl120.util;
 
 import std.range;
 
@@ -27,19 +27,14 @@ T[Args.length + 1] propertyList(T,Args...)(Args args)
     return props;
 }
 
-struct EnumAndReturnType(alias flag_, ReturnT_, alias handler_ = null)
-{
-    alias flag = flag_;
-    alias ReturnT = ReturnT_;
-    static if(!is(typeof(handler_) == typeof(null)))
-        alias handler = handler_;
-}
+struct ArrayAccesssor(alias ptr, alias len) {}
 
-alias EART = EnumAndReturnType;
+struct StringzAccessor(alias ptr) {}
 
-struct EARTGroup(alias F_, EARTs_...)
-if (allSatisfy!(ApplyLeft!(isInstanceOf, EART), EARTs_))
+struct ZeroTerminatedArrayAccessor(alias ptr) {}
+
+mixin template generateGetInfo(alias func)
 {
-    alias F = F_;
-    alias EARTs = EARTs_;
+    //TODO
+    //
 }
