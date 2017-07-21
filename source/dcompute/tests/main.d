@@ -10,7 +10,7 @@ import dcompute.tests.dummykernels : saxpy;
 
 import dcompute.driver.ocl120;
 
-ubyte[][] readBinaryFromDisk()
+ubyte[] readBinaryFromDisk()
 {
     return typeof(return).init;
 }
@@ -22,7 +22,7 @@ int main(string[] args)
     auto devices  = platform.getDevices(theAllocator);
     auto plist    = propertyList!(Context.Properties)(Context.Properties.platform);
     auto context  = Context(devices,plist);
-    Program.globalProgram = context.createProgramFromBinary(devices,readBinaryFromDisk());
+    Program.globalProgram = context.createProgramFromSPIR(theAllocator,devices,readBinaryFromDisk());
     auto queue    = context.createQueue(devices[0],Queue.Properties.outOfOrderExecution);
     auto data     = somedata();
     auto buf      = context.createBuffer!(float)(Memory.Flags.none,data);
