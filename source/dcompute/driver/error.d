@@ -132,17 +132,17 @@ enum Status : int {
 version (D_BetterC)
 {
     void delegate (Status) nothrow @nogc onDriverError =
-                  (Status _status) => _defaultOnDriverError(_status);
-    immutable defaultOnDriverError =
-                  (Status _status) => _defaultOnDriverError(_status);
-
-    void _defaultOnDriverError(Status _status) nothrow @nogc
+                  (Status _status) => defaultOnDriverError(_status);
+    immutable void delegate (Status) nothrow @nogc defaultOnDriverError =
+    (Status _status)
     {
         import core.stdc.stdio : stderr;
         import std.conv : to;
         fprintf(stderr,"*** DCompute driver error:%s\n",
-                _status.to!(string).toStringz);
-    }
+        _status.to!(string).toStringz);
+
+    };
+
 }
 else
 {
@@ -160,14 +160,12 @@ else
         }
     }
     void delegate(Status) onDriverError =
-                 (Status _status) => _defaultOnDriverError(_status);
-    immutable defaultOnDriverError =
-                 (Status _status) => _defaultOnDriverError(_status);
-
-    void _defaultOnDriverError(Status _status)
+                 (Status _status) => defaultOnDriverError(_status);
+    immutable void delegate(Status) defaultOnDriverError =
+    (Status _status)
     {
         throw new DComputeDriverException(_status);
-    }
+    };
 }
 
 // Thread local status
