@@ -1,6 +1,7 @@
 module dcompute.driver.ocl120.platform;
 
 import dcompute.driver.ocl120;
+import std.experimental.allocator.typed;
 
 struct Platform
 {
@@ -21,13 +22,13 @@ struct Platform
 
     }
     cl_platform_id raw;
-    static Platform[] getPlatforms(A)(A allocator)
+    static Platform[] getPlatforms(A)(A a)
     {
+        auto allocator = TypedAllocator!(A)(a);
         cl_uint numPlatforms;
         status = cast(Status)clGetPlatformIDs(0,null,&numPlatforms);
         checkErrors();
-        //cl_platform_id[] ret = makeArray!(cl_platform_id,A)(allocator,numPlatforms);
-        cl_platform_id[] ret = new cl_platform_id[numPlatforms];
+        cl_platform_id[] ret = allocator.makeArray!(cl_platform_id)(numPlatforms);
         status = cast(Status)clGetPlatformIDs(numPlatforms,cast(cl_platform_id*)ret.ptr,null);
         checkErrors();
         return cast(Platform[])ret;
@@ -35,8 +36,9 @@ struct Platform
     
     mixin generateGetInfo!clGetPlatformInfo;
     
-    Device[] getDevices(A)(A allocator,Device.Type device_type = Device.Type.all)
+    Device[] getDevices(A)(A a,Device.Type device_type = Device.Type.all)
     {
+        auto allocator = TypedAllocator!(A)(a);
         uint numDevices;
         status = cast(Status)clGetDeviceIDs(
             raw,
@@ -45,8 +47,8 @@ struct Platform
             null,
             &numDevices);
         
-        //auto deviceIDs = allocator.makeArray!cl_device_id(numDevices);
-        auto deviceIDs = new cl_device_id[numDevices];
+        auto deviceIDs = allocator.makeArray!cl_device_id(numDevices);
+        
         status = cast(Status)clGetDeviceIDs(
             raw,
             cast(cl_device_type)device_type,
