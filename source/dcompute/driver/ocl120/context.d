@@ -115,10 +115,24 @@ struct Context
      }
     */
     
-    Program createProgramFromBinary(Device[] devices,ubyte[][] binaries)
+    Program createProgramFromSPIR(A)(A allocator, Device[] devices,ubyte[] spir)
     {
+        //auto lengths = allocator.makeArray!(size_t)(devices.length);
+        auto lengths = new size_t[devices.length];
+        lengths[]    = spir.length;
+        //auto ptrs  = allocator.makeArray!(ubyte*)(devices.length);
+        auto ptrs    = new ubyte*[devices.length];
+        ptrs[]       = spir.ptr;
         Program ret;
-        //clCreateProgramWithBinary
+
+        ret.raw = clCreateProgramWithBinary(
+                                this.raw,
+                                cast(uint)devices.length, cast(cl_device_id*)devices.ptr,
+                                lengths.ptr,ptrs.ptr,
+                                null, // TODO report individual errors
+                                cast(int*)&status);
+        //allocator.dispose(lengths);
+        //allocator.dispose(prts);
         return ret;
     }
     
