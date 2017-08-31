@@ -12,3 +12,5 @@ struct Buffer(T)
         checkErrors();
     }
 }
+
+alias bf = Buffer!float;

@@ -7,7 +7,7 @@ struct Context
     void* raw;
     this(Device dev, uint flags)
     {
-        status = cast(Status)cuCtxCreate(&raw, flags,dev);
+        status = cast(Status)cuCtxCreate(&raw, flags,dev.raw);
         checkErrors();
     }
     
@@ -22,12 +22,14 @@ struct Context
         Context ret;
         status = cast(Status)cuCtxPopCurrent(&ret.raw);
         checkErrors();
+		return ret;
     }
     static @property Context current()
     {
         Context ret;
         status = cast(Status)cuCtxGetCurrent(&ret.raw);
         checkErrors();
+		return ret;
     }
     
     static @property void current(Context ctx)
@@ -83,7 +85,7 @@ struct Context
     static @property CacheConfig cacheConfig()
     {
         CacheConfig ret;
-        status = cast(Status)cuCtxSetSharedMemConfig(&ret);
+        status = cast(Status)cuCtxGetSharedMemConfig(cast(int*)&ret);
         checkErrors();
         return ret;
     }
@@ -91,7 +93,7 @@ struct Context
     @property uint apiVersion()
     {
         uint ret;
-        status = cast(Status)cuCtxGetApiVersion(&ret);
+        status = cast(Status)cuCtxGetApiVersion(raw,&ret);
         checkErrors();
         return ret;
     }

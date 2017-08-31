@@ -1,6 +1,8 @@
-module dcopute.driver.cuda;
+module dcompute.driver.cuda;
 
 public import derelict.cuda.driverapi;
+
+public import dcompute.driver.error;
 
 public import dcompute.driver.cuda.buffer;
 public import dcompute.driver.cuda.context;

@@ -21,7 +21,7 @@ struct Queue
         uint ret;
         status = cast(Status)cuStreamGetFlags(raw,&ret);
         checkErrors();
-        cast(bool) ret;
+        return cast(bool) ret;
     }
     
     @property int priority()
@@ -34,13 +34,13 @@ struct Queue
 
     void wait(Event e,uint flags)
     {
-        status = cast(Status)cuStreamWaitEvent(e.raw,flags);
+        status = cast(Status)cuStreamWaitEvent(raw,e.raw,flags);
         checkErrors();
     }
     
     // cuMemcpy.*Async and friends
     // TODO: implement this properly
-    template copy(T, CopySource from, CopySource to, int dimentions = 1,
+    /*template copy(T, CopySource from, CopySource to, int dimentions = 1,
                   Flag!"peer" _peer = No.peer)
     {
         auto copy(Memory to)
@@ -48,7 +48,8 @@ struct Queue
             status = cast(Status)cuMemcpy(to.ptr.raw,ptr.raw,length);
             checkErrors();
         }
-    }
+    }*/
+
     
     /*void addCallback(void delegate(Queue,Status) dg)
     {
