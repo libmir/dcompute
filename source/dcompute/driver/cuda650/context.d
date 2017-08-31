@@ -21,14 +21,14 @@ struct Context
         status = cast(Status)cuCtxPopCurrent(&ret.raw);
         checkErrors();
     }
-    static Context @property current()
+    static @property Context current()
     {
         Context ret;
         status = cast(Status)cuCtxGetCurrent(&ret.raw);
         checkErrors();
     }
     
-    static void @property current(Context ctx)
+    static @property void current(Context ctx)
     {
         status = cast(Status)cuCtxSetCurrent(ctx.raw);
         checkErrors();
@@ -49,13 +49,13 @@ struct Context
         deviceRuntimePendingLaunchCount
     }
     
-    static void @property limit(Limit what)(size_t lim)
+    static @property void limit(Limit what)(size_t lim)
     {
         status = cast(Status)cuCtxSetLimit(what,lim);
         checkErrors();
     }
     
-    static size_t @property limit(Limit what)()
+    static @property size_t limit(Limit what)()
     {
         size_t ret;
         status = cast(Status)cuCtxSetLimit(&ret,what);
