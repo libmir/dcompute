@@ -1,7 +1,7 @@
 module dcompute.driver.cuda650.platform;
 
 import dcompute.driver.error;
-import std.allocator.typed;
+import std.experimental.allocator.typed;
 
 struct Platform
 {
