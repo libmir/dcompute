@@ -1,7 +1,7 @@
 // A stream in CUDA speak
-module dcompute.driver.cuda650.queue;
+module dcompute.driver.cuda.queue;
 
-import dcompute.driver.cuda650;
+import dcompute.driver.cuda;
 struct Queue
 {
     void* raw;

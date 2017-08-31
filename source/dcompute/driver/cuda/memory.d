@@ -1,7 +1,7 @@
-module dcompute.driver.cuda650.memory;
+module dcompute.driver.cuda.memory;
 
 import dcompute.driver.error;
-import dcompute.driver.cuda650;
+import dcompute.driver.cuda;
 
 // void pointer like
 struct MemoryPointer

@@ -1,6 +1,6 @@
-module dcompute.driver.cuda650.buffer;
+module dcompute.driver.cuda.buffer;
 
-import dcompute.driver.cuda650;
+import dcompute.driver.cuda;
 
 struct Buffer(T)
 {

@@ -1,6 +1,6 @@
-module dcompute.driver.cuda650.device;
+module dcompute.driver.cuda.device;
 
-import dcompute.river.cuda650;
+import dcompute.river.cuda;
 
 struct Device
 {
