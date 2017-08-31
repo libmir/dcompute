@@ -1,6 +1,6 @@
 module dcompute.driver.cuda650.context;
 
-import dcompute.driver.cuda650.device;
+import dcompute.driver.cuda650;
 
 struct Context
 {

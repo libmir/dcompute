@@ -1,5 +1,6 @@
 module dcompute.driver.cuda650.program;
 
+import dcompute.driver.cuda650;
 struct Program
 {
     void* raw;

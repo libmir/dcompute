@@ -1,5 +1,7 @@
 module dcompute.driver.cuda650.device;
 
+import dcompute.river.cuda650;
+
 struct Device
 {
     int raw;
