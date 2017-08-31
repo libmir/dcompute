@@ -96,7 +96,7 @@ struct Device
         @(85) int multiGPUBoardGroupID;
     }
     
-    @proprty size_t totalMemory()
+    @property size_t totalMemory()
     {
         size_t ret;
         status = cast(Status)cuDeviceTotalMem(&ret,raw);
