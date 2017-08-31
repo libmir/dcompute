@@ -90,7 +90,7 @@ struct Device
         @(79) int globalL1CacheSupported;
         @(80) int localL1CacheSupported;
         @(81) int maxSharedMemoryPerMultiprocessor;
-        @(82) int maxRegistorsPerMultiprocessor
+        @(82) int maxRegistorsPerMultiprocessor;
         @(83) int managedMemory;
         @(84) int multiGPUBoard;
         @(85) int multiGPUBoardGroupID;
