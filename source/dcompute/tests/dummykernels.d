@@ -1,5 +1,5 @@
 @compute(CompileFor.deviceOnly)
-module dcompute.dummykernels;
+module dcompute.tests.dummykernels;
 pragma(LDC_no_moduleinfo);
 
 import ldc.dcompute;
@@ -9,4 +9,13 @@ import dcompute.std.index;
 {
     auto i = GlobalIndex.x;
     a[i] = b[i] +c;
+}
+
+alias aagf = AutoIndexed!(GlobalPointer!(float));
+
+@kernel void auto_index_test(aagf a,
+                             aagf b,
+                             aagf c)
+{
+    a = b + c;
 }

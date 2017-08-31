@@ -1,7 +1,6 @@
 @compute(CompileFor.deviceOnly) module dcompute.std.sync;
 
-import ldc.attributes;
-import dcompute.reflect;
+import ldc.dcompute;
 
 import ocl  = dcompute.std.opencl.sync;
 import cuda = dcompute.std.cuda.sync;

@@ -1,6 +1,6 @@
 @compute(CompileFor.deviceOnly) module dcompute.std.opencl.index;
 
-import ldc.attributes;
+import ldc.dcompute;
 
 // For mangling pruposes (Itanium), may need to change to pragma(mangle,"...")
 // if we want to support windows.

@@ -1,6 +1,6 @@
 @compute(CompileFor.deviceOnly) module dcompute.std.cuda.index;
 
-import ldc.attributes;
+import ldc.dcompute;
 pure: nothrow: @nogc:
 //tid = threadId
 pragma(LDC_intrinsic, "llvm.nvvm.read.ptx.sreg.tid.x")

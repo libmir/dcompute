@@ -1,6 +1,6 @@
 @compute(CompileFor.hostAndDevice) module dcompute.std.memory;
 
-import ldc.attributes;
+import ldc.dcompute;
 
 /*
  *Pointer conversions:

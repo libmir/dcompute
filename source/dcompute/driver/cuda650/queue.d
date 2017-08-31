@@ -1,0 +1,91 @@
+// A stream in CUDA speak
+module dcompute.driver.cuda650.queue;
+
+struct Queue
+{
+    void* raw;
+    this (bool async)
+    {
+        status = cast(Status)cuStreamCreate(&raw,async ? 0 : 1);
+        checkErrors();
+    }
+    this (bool async, int priority)
+    {
+        status = cast(Status)cuStreamCreateWithPriority(&raw,async ? 0 : 1,priority);
+        checkErrors();
+    }
+    
+    @property bool async()
+    {
+        uint ret;
+        status = cast(Status)cuStreamGetFlags(raw,&ret);
+        checkErrors();
+        cast(bool) ret;
+    }
+    
+    @property int priority()
+    {
+        int ret;
+        status = cast(Status)cuStreamGetPriority(raw,&ret);
+        checkErrors();
+        return ret;
+    }
+
+    void wait(Event e,uint flags)
+    {
+        status = cast(Status)cuStreamWaitEvent(e.raw,flags);
+        checkErrors();
+    }
+    
+    // cuMemcpy.*Async and friends
+    // TODO: implement this properly
+    template copy(T, CopySource from, CopySource to, int dimentions = 1,
+                  Flag!"peer" _peer = No.peer)
+    {
+        auto copy(Memory to)
+        {
+            status = cast(Status)cuMemcpy(to.ptr.raw,ptr.raw,length);
+            checkErrors();
+        }
+    }
+    
+    /*void addCallback(void delegate(Queue,Status) dg)
+    {
+        static CUstreamCallback cb = (void* ,Status void*) =>
+        cuStreamAddCallback
+    }*/
+    
+    auto enqueue(alias k)(uint[3] _grid, uint[3] _block, uint _sharedMem)
+    {
+        static struct Call
+        {
+            Queue q;
+            uint[3] grid, block;
+            uint sharedMem;
+            
+            //TODO integrate evnts into this.
+            void opCall(HostArgsOf!(typeof(k)) args)
+            {
+                auto kernel = Program.globalProgram.getKernel!k();
+                void*[typeof(args).length] vargs;
+                foreach(uint i, ref a; args)
+                {
+                    vargs[i] = cast(void*)&a;
+                }
+                
+                status = cast(Status)
+                        cuLaunchKernel(kernel,
+                                       grid[0], grid[1], grid[2],
+                                       block[0],block[1],block[2],
+                                       sharedMem,
+                                       q.raw,
+                                       vargs.ptr,
+                                       null);
+                                       
+                
+            }
+        }
+        
+        return Call(this,_grid,_block,_sharedMem);
+    }
+}

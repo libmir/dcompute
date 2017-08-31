@@ -4,28 +4,30 @@ import std.stdio;
 import std.traits;
 import std.meta;
 
-struct Buffer {}
-struct Queue {}
-void computeMap(alias F)(Queue q,Buffer b,  Parameters!F _args){
-    alias kfunc = map!F;
-    alias args = AliasSeq!(b,_args);
-    // int err;
-    // auto k = Kernel(globalProgram,(kfunc).mangleof,&err);
-    //enforce(err == Error.Success);
-    //setKernelParameters!(kfunc)(k, args);
-    //q.enqueueKernel(k,1,/*Offset*/[0],/GlobalSize**/[linearShapeOf(b)]
-    //                  ,/*SharedSize*/[someSensibleDefault(linearShapeOf(b))]
-    //                  ,/*events*/[],null);
-    string s = (kfunc).mangleof;
-    writeln(s);
+import std.experimental.allocator;
+
+import dcompute.tests.dummykernels : saxpy;
+
+import dcompute.driver.ocl120;
+
+ubyte[] readBinaryFromDisk()
+{
+    return typeof(return).init;
 }
 
+float[] somedata() { return [1,2,3,4,5]; }
 int main(string[] args)
 {
-    int a = 3;
-    auto q = Queue();
-    auto b = Buffer();
-    q.computeMap!((int x) => x*x)(b, a);
+    auto platform = Platform.getPlatforms(theAllocator)[0];
+    auto devices  = platform.getDevices(theAllocator);
+    auto plist    = propertyList!(Context.Properties)(Context.Properties.platform);
+    auto context  = Context(devices,plist);
+    Program.globalProgram = context.createProgramFromSPIR(theAllocator,devices,readBinaryFromDisk());
+    auto queue    = context.createQueue(devices[0],Queue.Properties.outOfOrderExecution);
+    auto data     = somedata();
+    auto buf      = context.createBuffer!(float)(Memory.Flags.none,data);
+    Event e = queue.enqueue!(saxpy)([5])(buf,buf,42.0);
+    e.wait();
     return 0;
 }
 
