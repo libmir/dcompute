@@ -1,5 +1,7 @@
 module dcompute.driver.cuda650.context;
 
+import dcompute.driver.cuda650.device;
+
 struct Context
 {
     void* raw;
