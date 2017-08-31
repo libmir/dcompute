@@ -1,4 +1,6 @@
-module dcompute.driver.cuda650.buffer;
+module dcompute.driver.cuda.buffer;
+
+import dcompute.driver.cuda;
 
 struct Buffer(T)
 {
@@ -10,3 +12,5 @@ struct Buffer(T)
         checkErrors();
     }
 }
+
+alias bf = Buffer!float;

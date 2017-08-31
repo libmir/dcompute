@@ -1,5 +1,6 @@
-module dcompute.driver.cuda650.kernel;
+module dcompute.driver.cuda.kernel;
 
+import dcompute.driver.cuda;
 struct Kernel(F) if (is(F==function)|| is(F==void))
 {
     void* raw;
@@ -17,13 +18,5 @@ struct Kernel(F) if (is(F==function)|| is(F==void))
         @(6) int binaryVersion;
         @(7) int cacheModeCa;
     }
-    
 
-    
-    enum MemoryBankConfig : int
-    {
-        default_,
-        fourBytes,
-        eightBytes,
-    }
 }

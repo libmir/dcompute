@@ -1,6 +1,7 @@
-module dcompute.driver.cuda650.memory;
+module dcompute.driver.cuda.memory;
 
 import dcompute.driver.error;
+import dcompute.driver.cuda;
 
 // void pointer like
 struct MemoryPointer
@@ -8,7 +9,7 @@ struct MemoryPointer
     size_t raw;
     static MemoryPointer allocate(size_t nbytes)
     {
-        Memory ret;
+        MemoryPointer ret;
         status = cast(Status)cuMemAlloc(&ret.raw,nbytes);
         checkErrors();
         return ret;
@@ -18,8 +19,9 @@ struct MemoryPointer
     Memory addressRange()
     {
         Memory ret;
-        status = cast(Status)cuMemGetAddressRange(&ret.raw,&ret.length,raw);
+        status = cast(Status)cuMemGetAddressRange(&ret.ptr.raw,&ret.length,raw);
         checkErrors();
+		return ret;
     }
 
 }
@@ -39,6 +41,7 @@ struct Memory
 
     // cuMemcpy and friends
     // TODO: implement this properly
+	/*
     template copy(T, CopySource from, CopySource to, int dimentions = 1,
                   Flag!"peer" _peer = No.peer)
     {
@@ -47,7 +50,7 @@ struct Memory
             status = cast(Status)cuMemcpy(to.ptr.raw,ptr.raw,length);
             checkErrors();
         }
-    }
+    }*/
 
     // TODO: cuMemset & frineds
 
