@@ -39,6 +39,7 @@ struct Program
         return ret;
     }
     
+	static Program globalProgram;
     //cuModuleLoadDataEx
     //cuModuleLoadFatBinary
     
@@ -47,7 +48,7 @@ struct Program
         status = cast(Status)cuModuleUnload(raw);
         checkErrors();
     }
-    static Program globalProgram;
+
     //TODO: linkstate
 }
 

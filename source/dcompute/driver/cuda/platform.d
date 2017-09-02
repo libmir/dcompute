@@ -12,7 +12,7 @@ struct Platform
         checkErrors();
     }
     
-    Device[] devices(A)(A a)
+    static Device[] getDevices(A)(A a)
     {
         int len;
         TypedAllocator!(A) allocator;
