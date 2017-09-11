@@ -22,7 +22,7 @@ struct Platform
 
         //TODO:
         //Device[] ret = allocator.makeArray!(Device)(len);
-		    Device[] ret = new Device[len];
+            Device[] ret = new Device[len];
         foreach(int i; 0 .. len)
         {
             status = cast(Status)cuDeviceGet(&ret[i].raw,i);

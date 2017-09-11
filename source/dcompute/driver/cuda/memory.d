@@ -21,7 +21,7 @@ struct MemoryPointer
         Memory ret;
         status = cast(Status)cuMemGetAddressRange(&ret.ptr.raw,&ret.length,raw);
         checkErrors();
-		return ret;
+        return ret;
     }
 
 }
@@ -41,7 +41,7 @@ struct Memory
 
     // cuMemcpy and friends
     // TODO: implement this properly
-	/*
+    /*
     template copy(T, CopySource from, CopySource to, int dimentions = 1,
                   Flag!"peer" _peer = No.peer)
     {
