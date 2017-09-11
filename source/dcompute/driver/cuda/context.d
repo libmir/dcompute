@@ -22,14 +22,14 @@ struct Context
         Context ret;
         status = cast(Status)cuCtxPopCurrent(&ret.raw);
         checkErrors();
-		return ret;
+        return ret;
     }
     static @property Context current()
     {
         Context ret;
         status = cast(Status)cuCtxGetCurrent(&ret.raw);
         checkErrors();
-		return ret;
+        return ret;
     }
     
     static @property void current(Context ctx)

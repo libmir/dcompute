@@ -141,8 +141,8 @@ version (D_BetterC)
             import std.conv : to;
             fprintf(stderr,"*** DCompute driver error:%s\n",
                    _status.to!(string).toStringz);
-		};
-	}
+        };
+    }
 }
 else
 {
@@ -162,7 +162,7 @@ else
     void delegate(Status) onDriverError;
     immutable void delegate(Status) defaultOnDriverError;
     static this()
-	{
+    {
         defaultOnDriverError = (Status _status)
         {
             throw new DComputeDriverException(_status);

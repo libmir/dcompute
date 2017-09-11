@@ -39,7 +39,7 @@ struct Program
         return ret;
     }
     
-	__gshared static Program globalProgram;
+    __gshared static Program globalProgram;
     //cuModuleLoadDataEx
     //cuModuleLoadFatBinary
     

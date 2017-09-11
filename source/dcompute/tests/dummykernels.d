@@ -6,12 +6,12 @@ import ldc.dcompute;
 import dcompute.std.index;
 
 @kernel void saxpy(GlobalPointer!(float) res,
-				   float alpha,GlobalPointer!(float) x,
-				   GlobalPointer!(float) y, 
-				   size_t N)
+                   float alpha,GlobalPointer!(float) x,
+                   GlobalPointer!(float) y, 
+                   size_t N)
 {
     auto i = GlobalIndex.x;
-	if (i >= N) return;
+    if (i >= N) return;
     res[i] = alpha*x[i] + y[i];
 }
 
