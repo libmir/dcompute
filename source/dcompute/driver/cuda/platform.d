@@ -8,6 +8,7 @@ struct Platform
 {
     static void initialise(uint flags =0)
     {
+        DerelictCUDADriver.load();
         status = cast(Status)cuInit(flags);
         checkErrors();
     }
