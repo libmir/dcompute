@@ -19,9 +19,10 @@ struct Platform
         TypedAllocator!(A) allocator;
         status = cast(Status)cuDeviceGetCount(&len);
         checkErrors();
-		//TODO:
+
+        //TODO:
         //Device[] ret = allocator.makeArray!(Device)(len);
-		Device[] ret = new Device[len];
+		    Device[] ret = new Device[len];
         foreach(int i; 0 .. len)
         {
             status = cast(Status)cuDeviceGet(&ret[i].raw,i);

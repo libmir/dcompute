@@ -48,7 +48,7 @@ struct Program
         status = cast(Status)cuModuleUnload(raw);
         checkErrors();
     }
-
+    
     //TODO: linkstate
 }
 
