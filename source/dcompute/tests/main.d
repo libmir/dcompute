@@ -45,8 +45,8 @@ int main(string[] args)
 		auto dev	= devs[0]; 
 		auto ctx	= Context(dev); scope(exit) ctx.detach();
 
-		// Change the file path to match your GPU.
-		Program.globalProgram = Program.fromFile("./kernels_cuda210_64.ptx");
+		// Change the file to match your GPU.
+		Program.globalProgram = Program.fromFile("./.dub/obj/kernels_cuda210_64.ptx");
 		auto q = Queue(false);
 
 		enum size_t N = 128;
