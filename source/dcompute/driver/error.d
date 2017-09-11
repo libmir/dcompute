@@ -133,14 +133,14 @@ version (D_BetterC)
 {
     void delegate (Status) nothrow @nogc onDriverError;
     immutable void delegate (Status) nothrow @nogc defaultOnDriverError;
-	static this()
-	{
-		defaultOnDriverError = (Status _status)
-		{
-			import core.stdc.stdio : stderr;
-			import std.conv : to;
-			fprintf(stderr,"*** DCompute driver error:%s\n",
-					_status.to!(string).toStringz);
+    static this()
+    {
+        defaultOnDriverError = (Status _status)
+        {
+            import core.stdc.stdio : stderr;
+            import std.conv : to;
+            fprintf(stderr,"*** DCompute driver error:%s\n",
+                   _status.to!(string).toStringz);
 		};
 	}
 }
@@ -161,13 +161,13 @@ else
     }
     void delegate(Status) onDriverError;
     immutable void delegate(Status) defaultOnDriverError;
-	static this()
+    static this()
 	{
-		defaultOnDriverError = (Status _status)
-		{
-			throw new DComputeDriverException(_status);
-		};
-	}
+        defaultOnDriverError = (Status _status)
+        {
+            throw new DComputeDriverException(_status);
+        };
+    }
 }
 static this() { onDriverError = (Status _status) { defaultOnDriverError(_status);};}
 // Thread local status

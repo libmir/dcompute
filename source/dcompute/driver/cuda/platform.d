@@ -8,18 +8,21 @@ struct Platform
 {
     static void initialise(uint flags =0)
     {
+        DerelictCUDADriver.load();
         status = cast(Status)cuInit(flags);
         checkErrors();
     }
     
-    Device[] devices(A)(A a)
+    static Device[] getDevices(A)(A a)
     {
         int len;
         TypedAllocator!(A) allocator;
         status = cast(Status)cuDeviceGetCount(&len);
         checkErrors();
-        
-        Device[] ret = allocator.makeArray!(Device)(len);
+
+        //TODO:
+        //Device[] ret = allocator.makeArray!(Device)(len);
+		    Device[] ret = new Device[len];
         foreach(int i; 0 .. len)
         {
             status = cast(Status)cuDeviceGet(&ret[i].raw,i);

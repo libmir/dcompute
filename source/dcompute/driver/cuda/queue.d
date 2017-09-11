@@ -57,7 +57,7 @@ struct Queue
         cuStreamAddCallback
     }*/
     
-    auto enqueue(alias k)(uint[3] _grid, uint[3] _block, uint _sharedMem)
+    auto enqueue(alias k)(uint[3] _grid, uint[3] _block, uint _sharedMem = 0)
     {
         static struct Call
         {
@@ -65,6 +65,13 @@ struct Queue
             uint[3] grid, block;
             uint sharedMem;
             
+			this(Queue _q,uint[3] _grid, uint[3] _block, uint _sharedMem)
+			{
+				q= _q;
+				grid = _grid;
+				block = _block;
+				sharedMem = _sharedMem;
+			}
             //TODO integrate evnts into this.
             void opCall(HostArgsOf!(typeof(k)) args)
             {
@@ -76,7 +83,7 @@ struct Queue
                 }
                 
                 status = cast(Status)
-                        cuLaunchKernel(kernel,
+                        cuLaunchKernel(kernel.raw,
                                        grid[0], grid[1], grid[2],
                                        block[0],block[1],block[2],
                                        sharedMem,

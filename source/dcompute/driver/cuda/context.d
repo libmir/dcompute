@@ -5,7 +5,7 @@ import dcompute.driver.cuda;
 struct Context
 {
     void* raw;
-    this(Device dev, uint flags)
+    this(Device dev, uint flags = 0)
     {
         status = cast(Status)cuCtxCreate(&raw, flags,dev.raw);
         checkErrors();
