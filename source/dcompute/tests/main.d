@@ -40,12 +40,14 @@ int main(string[] args)
 	version(DComputeTestCUDA)
 	{
 		Platform.initialise();
+		
 		auto devs	= Platform.getDevices(theAllocator);
 		auto dev	= devs[0]; 
 		auto ctx	= Context(dev); scope(exit) ctx.detach();
 
-		Program.globalProgram = Program.fromFile("");
-		auto q	= Queue(false);
+		// Change the file path to match your GPU.
+		Program.globalProgram = Program.fromFile("./kernels_cuda210_64.ptx");
+		auto q = Queue(false);
 
 		enum size_t N = 128;
 		float alpha = 5.0;
@@ -62,13 +64,14 @@ int main(string[] args)
 
 		b_x.copy!(Copy.hostToDevice);
 		b_y.copy!(Copy.hostToDevice);
-	pragma(msg,HostArgsOf!(typeof(saxpy)));
+
 		q.enqueue!(saxpy)
 			([N,1,1],[1,1,1])
 			(b_res,alpha,b_x,b_y, N);
 		b_res.copy!(Copy.deviceToHost);
 		foreach(i; 0 .. N)
 			enforce(res[i] == alpha * x[i] + y[i]);
+		writeln(res[]);
 	}
 
     return 0;
