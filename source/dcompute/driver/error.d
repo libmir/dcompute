@@ -44,7 +44,7 @@ enum Status : int {
     setOnActiveProcessError = 36,
     noDeviceError           = 37,
     startupFailure          = 0x7f,
-    apiFailureBase          = 1000,
+    apiFailureBase          = 10000,
     // OpenCL Errors.
     deviceNotFound                 = -1,
     deviceNotAvailable             = -2,
