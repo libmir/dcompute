@@ -10,11 +10,40 @@
 This project is a set of libraries designed to work with [ldc][1] to 
 enable native execution of D on GPUs (and other more exotic targets of OpenCL such as FPGAs DSPs, hereafter just 'GPUs') on the OpenCL and CUDA runtimes.
 
-There are three main parts 
+There are four main parts 
 * A standard library '[std](https://github.com/libmir/dcompute/tree/master/source/dcompute/std)' containing standard functionality for targetting GPUs, an abstraction layer over the intrinsics.
 * A [driver](https://github.com/libmir/dcompute/tree/master/source/dcompute/driver) library to handle all the compute API interactions and provide a friendly, easy-to-use, consistent interface. Of course you can always get down to a lower level of interaction if you need to.
 * A set of standard [kernels](https://github.com/libmir/dcompute/tree/master/source/dcompute/kernels) and primitives to cover a large number of use cases and serve as documentation on how (and how not) to use this library.
+* A testing framework [tests](https://github.com/libmir/dcompute/tree/master/source/dcompute/tests) for testing kernels. The suite is runnable with `dub test`.
 
+## Examples
+
+Kernel:
+```
+@kernel void saxpy(GlobalPointer!(float) res,
+                   float alpha,
+                   GlobalPointer!(float) x,
+                   GlobalPointer!(float) y, 
+                   size_t N)
+{
+    auto i = GlobalIndex.x;
+    if (i >= N) return;
+    res[i] = alpha*x[i] + y[i];
+}
+```
+
+Invoke with (CUDA):
+```
+q.enqueue!(saxpy)
+    ([N,1,1],[1,1,1]) // Block & grid & optional shared memory
+    (b_res,alpha,b_x,b_y, N); // kernel arguments
+```
+equivalent to the CUDA code
+```
+saxpy<<<N,1,0,q>>>(b_res,alpha,b_x,b_y, N);
+```
+
+For more examples and the full code see `source/dcompute/tests`.
 ## Build Instructions
 
 To build DCompute you will need:
@@ -33,9 +62,5 @@ Please see the [wiki](https://github.com/libmir/dcompute/wiki).
 ## TODO
 
 Generate OpenCL builtins from [here](https://github.com/KhronosGroup/SPIR-Tools/wiki/SPIR-2.0-built-in-functions)
-
-Get D versions of the OpenCL and CUDA APIs so that work can begin on a unified D driver API.
-
-Add code examples to the readme.
 
 [1]: https://github.com/ldc-developers/ldc
