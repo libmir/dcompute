@@ -10,11 +10,11 @@
 This project is a set of libraries designed to work with [ldc][1] to 
 enable native execution of D on GPUs (and other more exotic targets of OpenCL such as FPGAs DSPs, hereafter just 'GPUs') on the OpenCL and CUDA runtimes.
 
-There are four main parts 
-* A standard library '[std](https://github.com/libmir/dcompute/tree/master/source/dcompute/std)' containing standard functionality for targetting GPUs, an abstraction layer over the intrinsics.
-* A [driver](https://github.com/libmir/dcompute/tree/master/source/dcompute/driver) library to handle all the compute API interactions and provide a friendly, easy-to-use, consistent interface. Of course you can always get down to a lower level of interaction if you need to.
-* A set of standard [kernels](https://github.com/libmir/dcompute/tree/master/source/dcompute/kernels) and primitives to cover a large number of use cases and serve as documentation on how (and how not) to use this library.
-* A testing framework [tests](https://github.com/libmir/dcompute/tree/master/source/dcompute/tests) for testing kernels. The suite is runnable with `dub test`.
+There are four main parts: 
+* [std](https://github.com/libmir/dcompute/tree/master/source/dcompute/std): A library containing standard functionality for targetting GPUs and abstractions over the intrinsics of OpenCL and CUDA.
+* [driver](https://github.com/libmir/dcompute/tree/master/source/dcompute/driver): For handling all the compute API interactions and provide a friendly, easy-to-use, consistent interface. Of course you can always get down to a lower level of interaction if you need to.
+* [kernels](https://github.com/libmir/dcompute/tree/master/source/dcompute/kernels): A set of standard kernels and primitives to cover a large number of use cases and serve as documentation on how (and how not) to use this library.
+* [tests](https://github.com/libmir/dcompute/tree/master/source/dcompute/tests): A framework for testing kernels. The suite is runnable with `dub test` (see `dub.json` for the configuration used).
 
 ## Examples
 
