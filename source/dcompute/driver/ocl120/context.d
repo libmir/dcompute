@@ -19,9 +19,10 @@ struct Context
     {
         @(0x1080) uint referenceCount;
         @(0x1081) Device* _devices;
-        @(0x1082) Properties* properties;
-        @(0x1083) uint numDevices;
-        ArrayAccesssor!(_devices,numDevices) devices;
+        @(0x1082) Properties* _properties;
+        ZeroTerminatedArrayAccessor!_properties properties;
+        @(0x1083) uint _numDevices;
+        ArrayAccesssor!(_devices,_numDevices) devices;
         // Extensions
         //@(0x2010) khrTerminate;
         //@(0x200E) khrMemoryInitialise;
