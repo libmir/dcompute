@@ -1,13 +1,16 @@
-module dcompute.driver.cuda650.program;
+module dcompute.driver.cuda.program;
 
+import dcompute.driver.cuda;
+
+import std.string;
 struct Program
 {
     void* raw;
     
     Kernel!void getKernelByName(immutable(char)* name)
     {
-        Kernel ret;
-        status = cast(Sataus)cuModuleGetFunction(ret.raw,this.raw,name);
+        Kernel!void ret;
+        status = cast(Status)cuModuleGetFunction(&ret.raw,this.raw,name);
         checkErrors();
         return ret;
     }
@@ -23,7 +26,7 @@ struct Program
     static Program fromFile(string name)
     {
         Program ret;
-        status = cast(Sataus)cuModuleLoad(&ret.raw,name.toStringz);
+        status = cast(Status)cuModuleLoad(&ret.raw,name.toStringz);
         checkErrors();
         return ret;
     }
@@ -31,20 +34,21 @@ struct Program
     static Program fromString(string name)
     {
         Program ret;
-        status = cast(Sataus)cuModuleLoadData(&ret.raw,name.toStringz);
+        status = cast(Status)cuModuleLoadData(&ret.raw,name.toStringz);
         checkErrors();
         return ret;
     }
     
+    __gshared static Program globalProgram;
     //cuModuleLoadDataEx
     //cuModuleLoadFatBinary
     
     void unload()
     {
-        status = cast(Sataus)cuModuleUnload(raw);
+        status = cast(Status)cuModuleUnload(raw);
         checkErrors();
     }
-    static Program globalProgram;
+    
     //TODO: linkstate
 }
 

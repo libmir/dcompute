@@ -44,7 +44,7 @@ enum Status : int {
     setOnActiveProcessError = 36,
     noDeviceError           = 37,
     startupFailure          = 0x7f,
-    apiFailureBase          = 1000,
+    apiFailureBase          = 10000,
     // OpenCL Errors.
     deviceNotFound                 = -1,
     deviceNotAvailable             = -2,
@@ -131,18 +131,18 @@ enum Status : int {
 
 version (D_BetterC)
 {
-    void delegate (Status) nothrow @nogc onDriverError =
-                  (Status _status) => defaultOnDriverError(_status);
-    immutable void delegate (Status) nothrow @nogc defaultOnDriverError =
-    (Status _status)
+    void delegate (Status) nothrow @nogc onDriverError;
+    immutable void delegate (Status) nothrow @nogc defaultOnDriverError;
+    static this()
     {
-        import core.stdc.stdio : stderr;
-        import std.conv : to;
-        fprintf(stderr,"*** DCompute driver error:%s\n",
-        _status.to!(string).toStringz);
-
-    };
-
+        defaultOnDriverError = (Status _status)
+        {
+            import core.stdc.stdio : stderr;
+            import std.conv : to;
+            fprintf(stderr,"*** DCompute driver error:%s\n",
+                   _status.to!(string).toStringz);
+        };
+    }
 }
 else
 {
@@ -159,15 +159,17 @@ else
             super(err.to!string, file, line, next);
         }
     }
-    void delegate(Status) onDriverError =
-                 (Status _status) => defaultOnDriverError(_status);
-    immutable void delegate(Status) defaultOnDriverError =
-    (Status _status)
+    void delegate(Status) onDriverError;
+    immutable void delegate(Status) defaultOnDriverError;
+    static this()
     {
-        throw new DComputeDriverException(_status);
-    };
+        defaultOnDriverError = (Status _status)
+        {
+            throw new DComputeDriverException(_status);
+        };
+    }
 }
-
+static this() { onDriverError = (Status _status) { defaultOnDriverError(_status);};}
 // Thread local status
 Status status;
 

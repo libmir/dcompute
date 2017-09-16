@@ -1,6 +1,7 @@
 // A stream in CUDA speak
-module dcompute.driver.cuda650.queue;
+module dcompute.driver.cuda.queue;
 
+import dcompute.driver.cuda;
 struct Queue
 {
     void* raw;
@@ -20,7 +21,7 @@ struct Queue
         uint ret;
         status = cast(Status)cuStreamGetFlags(raw,&ret);
         checkErrors();
-        cast(bool) ret;
+        return cast(bool) ret;
     }
     
     @property int priority()
@@ -33,13 +34,13 @@ struct Queue
 
     void wait(Event e,uint flags)
     {
-        status = cast(Status)cuStreamWaitEvent(e.raw,flags);
+        status = cast(Status)cuStreamWaitEvent(raw,e.raw,flags);
         checkErrors();
     }
     
     // cuMemcpy.*Async and friends
     // TODO: implement this properly
-    template copy(T, CopySource from, CopySource to, int dimentions = 1,
+    /*template copy(T, CopySource from, CopySource to, int dimentions = 1,
                   Flag!"peer" _peer = No.peer)
     {
         auto copy(Memory to)
@@ -47,7 +48,8 @@ struct Queue
             status = cast(Status)cuMemcpy(to.ptr.raw,ptr.raw,length);
             checkErrors();
         }
-    }
+    }*/
+
     
     /*void addCallback(void delegate(Queue,Status) dg)
     {
@@ -55,7 +57,7 @@ struct Queue
         cuStreamAddCallback
     }*/
     
-    auto enqueue(alias k)(uint[3] _grid, uint[3] _block, uint _sharedMem)
+    auto enqueue(alias k)(uint[3] _grid, uint[3] _block, uint _sharedMem = 0)
     {
         static struct Call
         {
@@ -63,6 +65,13 @@ struct Queue
             uint[3] grid, block;
             uint sharedMem;
             
+            this(Queue _q,uint[3] _grid, uint[3] _block, uint _sharedMem)
+            {
+                q= _q;
+                grid = _grid;
+                block = _block;
+                sharedMem = _sharedMem;
+            }
             //TODO integrate evnts into this.
             void opCall(HostArgsOf!(typeof(k)) args)
             {
@@ -74,7 +83,7 @@ struct Queue
                 }
                 
                 status = cast(Status)
-                        cuLaunchKernel(kernel,
+                        cuLaunchKernel(kernel.raw,
                                        grid[0], grid[1], grid[2],
                                        block[0],block[1],block[2],
                                        sharedMem,
