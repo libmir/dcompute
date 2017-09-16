@@ -9,16 +9,19 @@ struct Program
     {
         @(0x1160) uint referneceCount;
         @(0x1161) Context context;
+        
         @(0x1162) uint _numDevices;
         @(0x1163) Device* _devices;
         ArrayAccesssor!(_devices,_numDevices) devices;
+        
         @(0x1164) char* _source;
         StringzAccessor!(_source) source;
+        
         @(0x1165) size_t* _binarySizes;
-        // TODO expose `binaries` properly
-        @(0x1166) ubyte** binaries;
+        @(0x1166) ubyte** _binaries;
         @(0x1167) size_t _numKernels;
-        ArrayAccesssor!(_binarySizes,_numKernels) binarySizes;
+        ArrayAccesssor2D!(_binaries,_binarySizes,_numKernels) binaries;
+        
         @(0x1168) char* _kernelNames;
         StringzAccessor!(_kernelNames) kernelNames;
     }
