@@ -15,7 +15,7 @@ struct Event
         bufferCopy        = 0x11F5,
         imageRead         = 0x11F6,
         imageWrite        = 0x11F7,
-        imageCpoy         = 0x11F8,
+        imageCopy         = 0x11F8,
         imageToBufferCopy = 0x11F9,
         bufferToImageCopy = 0x11FA,
         bufferMap         = 0x11FB,
