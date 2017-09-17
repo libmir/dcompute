@@ -53,6 +53,8 @@ To build DCompute you will need:
 * [dub](https://github.com/dlang/dub)
 and then just run `$dub build` or add `"dcompute": "~>0.0.1"` to your `dub.json` or `dependency "dcompute" version="~>0.0.1"` to your `dub.sdl`.
 
+If you get an error like `Error: unrecognized switch '-mdcompute-targets=cuda-210`, make sure you are using LDC and not DMD: passing `--compiler=/path/to/ldc2` to dub will force it to use `/path/to/ldc2` as the D compiler.
+
 A dmd compatible d compiler,[dmd](https://github.com/dlang/dmd), ldmd or gdmd (available as part of [ldc][1] and [gdc](https://github.com/D-Programming-GDC/GDC) respectively), and cmake for building ldc is also required if you need to build ldc yourself.
  
 ## Getting Started
