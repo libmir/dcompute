@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.queue;
+module dcompute.driver.ocl.queue;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 import dcompute.driver.util;
 import std.typecons;
 
@@ -35,7 +35,7 @@ struct Queue
         @(0x1093) Properties properties;
     }
     
-    mixin generateGetInfo!clGetCommandQueueInfo;
+    //mixin(generateGetInfo!(Info,clGetCommandQueueInfo));
     
     void retain()
     {

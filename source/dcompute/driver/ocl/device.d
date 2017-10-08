@@ -1,7 +1,7 @@
-module dcompute.driver.ocl120.device;
+module dcompute.driver.ocl.device;
 
 import derelict.opencl.cl;
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 
 struct Device
 {
@@ -145,11 +145,11 @@ struct Device
         @(0x1041) size_t imageMaxArraySize;
         @(0x1042) Device parentDevice;
         @(0x1043) uint partitionMaxSubDevices;
-        @(0x1044) PartitionProperty* _partitionProperties;
-        ZeroTerminatedArrayAccessor!(_partitionProperties) partitionProperties;
+        //@(0x1044) PartitionProperty* _partitionProperties;
+        //ZeroTerminatedArrayAccessor!(_partitionProperties) partitionProperties;
         @(0x1045) AffinityDomain partitionAffinityDomain;
-        @(0x1046) PartitionProperty* _partitionType;
-        ZeroTerminatedArrayAccessor!(_partitionType) partitionType;
+        //@(0x1046) PartitionProperty* _partitionType;
+        //ZeroTerminatedArrayAccessor!(_partitionType) partitionType;
         @(0x1047) uint peferenceCount;
         @(0x1048) bool prefferedInteropUserSync;
         @(0x1049) size_t printfBufferSize;
@@ -168,8 +168,8 @@ struct Device
     }
     
     cl_device_id raw;
-    /*getInfo*/
-    mixin generateGetInfo!clGetDeviceInfo;
+
+    mixin(generateGetInfo!(Info,clGetDeviceInfo));
     
     //Is this a double call function? Also what to do about properties
     //its zero terminated an can contain numbers

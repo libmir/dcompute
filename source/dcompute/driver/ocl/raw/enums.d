@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.raw.enums;
+module dcompute.driver.ocl.raw.enums;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 
 enum //: profiling_info
 {

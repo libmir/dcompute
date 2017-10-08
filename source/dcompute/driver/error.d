@@ -80,7 +80,7 @@ enum Status : int {
     invalidSampler                 = -41,
     invalidBinary                  = -42,
     invalidBuildOptions            = -43,
-    invalinProgram                 = -44,
+    invalidProgram                 = -44,
     invalidExecutable              = -45,
     invalidKernelName              = -46,
     invalidKernelDefinition        = -47,
@@ -129,6 +129,7 @@ enum Status : int {
     EGLResourceNotAcquired         = -1092,
 }
 
+//@BUG@ The static this does not appear to work!
 version (D_BetterC)
 {
     void delegate (Status) nothrow @nogc onDriverError;
@@ -169,7 +170,9 @@ else
         };
     }
 }
-static this() { onDriverError = (Status _status) { defaultOnDriverError(_status);};}
+ static this() { 
+    onDriverError = (Status _status) { defaultOnDriverError(_status);};
+}
 // Thread local status
 Status status;
 

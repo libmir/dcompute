@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.image;
+module dcompute.driver.ocl.image;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 struct Image
 {
     cl_mem raw;
@@ -67,5 +67,5 @@ struct Image
         //@(0x401F) D3D11_SUBRESOURCE_KHR
         //@(0x202A) DX9_MEDIA_PLANE_KHR
     }
-    mixin generateGetInfo!(clGetImageInfo);
+    //mixin(generateGetInfo!(Info,clGetImageInfo));
 }

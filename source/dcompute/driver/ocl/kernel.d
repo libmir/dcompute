@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.kernel;
+module dcompute.driver.ocl.kernel;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 
 struct Kernel(F) if (is(F == function) || is(F==void))
 {
@@ -8,16 +8,16 @@ struct Kernel(F) if (is(F == function) || is(F==void))
     
     static struct Info
     {
-        @(0x1190) char* _name;
+        @(0x1190) immutable char* _name;
         StringzAccessor!(_name) name;
         @(0x1191) uint numArgs;
         @(0x1192) uint referenceCount;
         @(0x1193) Context context;
         @(0x1194) Program program;
-        @(0x1195) char* _attributes;
+        @(0x1195) immutable char* _attributes;
         StringzAccessor!(_attributes) attributes;
     }
-    mixin generateGetInfo!(clGetKernelInfo);
+    //mixin(generateGetInfo!(Info,clGetKernelInfo));
     void retain()
     {
         status = cast(Status)clRetainKernel(raw);
@@ -69,14 +69,14 @@ struct Arg
     {
         @(0x1196) AddressQualifier addressQualifier;
         @(0x1197) AccessQualifier accessQualifier;
-        @(0x1198) char* _typeName;
+        @(0x1198) immutable char* _typeName;
         StringzAccessor!(_typeName) typeName;
         @(0x1199) TypeQualifier typeQualifier;
-        @(0x119A) char* _name;
+        @(0x119A) immutable char* _name;
         StringzAccessor!(_name) name;
     }
     
-    mixin generateGetInfo!(clGetKernelArgInfo);
+    //mixin(generateGetInfo!(Info,clGetKernelArgInfo,"kernel.raw,argIndex"));
 }
 
 struct WorkGroup
@@ -93,5 +93,5 @@ struct WorkGroup
         @(0x11B5) size_t[3] globalWorkSize;
     }
     
-    mixin generateGetInfo!(clGetKernelWorkGroupInfo);
+    //mixin(generateGetInfo!(Info,clGetKernelWorkGroupInfo,"kernel.raw,device.raw"));
 }

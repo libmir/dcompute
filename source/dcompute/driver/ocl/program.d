@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.program;
+module dcompute.driver.ocl.program;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 import std.string : toStringz;
 
 struct Program
@@ -24,7 +24,7 @@ struct Program
     }
     static Program globalProgram;
     cl_program raw;
-    mixin generateGetInfo!(clGetProgramInfo);
+    //mixin(generateGetInfo!(Info,clGetProgramInfo));
     void retain()
     {
         status = cast(Status)clRetainProgram(raw);
@@ -91,5 +91,5 @@ struct Build
         StringzAccessor!(_log) log;
         @(0x1184) BinaryType binaryType;
     }
-    mixin generateGetInfo!(clGetProgramBuildInfo);
+    mixin(generateGetInfo!(Info,clGetProgramBuildInfo,"program.raw,device.raw"));
 }
