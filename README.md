@@ -51,7 +51,7 @@ To build DCompute you will need:
 * a SPIRV capable LLVM (available [here](https://github.com/thewilsonator/llvm/tree/compute) to build ldc to to support SPIRV (required for OpenCL)).
 * or LDC built with any LLVM 3.9.1 or greater that has the NVPTX backend enabled, to support CUDA.
 * [dub](https://github.com/dlang/dub)
-and then just run `$dub build` or add `"dcompute": "~>0.0.1"` to your `dub.json` or `dependency "dcompute" version="~>0.0.1"` to your `dub.sdl`.
+and then just run `$dub build` or add `"dcompute": "~>0.1.0"` to your `dub.json` or `dependency "dcompute" version="~>0.0.1"` to your `dub.sdl`.
 
 If you get an error like `Error: unrecognized switch '-mdcompute-targets=cuda-210`, make sure you are using LDC and not DMD: passing `--compiler=/path/to/ldc2` to dub will force it to use `/path/to/ldc2` as the D compiler.
 
