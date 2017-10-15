@@ -105,16 +105,18 @@ private template helper(Fields...)
             "   import std.typecons; size_t length; size_t* lengths; " ~ typeof(ptr).stringof ~ " ptr;" ~
             "   %1$s(%2$s," ~ __traits(getAttributes, len).stringof ~ "[0],length.sizeof, &length,null);" ~
             "   lengths = (new size_t[length]).ptr; ptr = (new " ~ typeof(*ptr).stringof ~ "[length]).ptr;" ~
-            "   %1$s(%2$s," ~ __traits(getAttributes, lens).stringof ~ "[0],lengths.sizeof, &lengths,null);" ~
+            "   %1$s(%2$s," ~ __traits(getAttributes, lens).stringof ~ "[0],lengths.sizeof, lengths,null);" ~
+            "   if (lengths[length - 1] == 0) length--;" ~
             "   foreach(i; 0 .. length) \n{" ~
             "       ptr[i] = (new " ~ typeof(**ptr).stringof ~ "[lengths[i]]).ptr;" ~
             "   }\n" ~
-            "   %1$s(%2$s," ~ __traits(getAttributes, ptr).stringof ~ "[0], ptr.sizeof, &ptr, null);"
+            "   %1$s(%2$s," ~ __traits(getAttributes, ptr).stringof ~ "[0], ptr.sizeof, ptr, null);" ~
             "   return typeof(return)(ptr,lengths,length,0);" ~
-            "\n" ~ helper!(Fields[1 .. $]);
+            "}\n" ~ helper!(Fields[1 .. $]);
     }
     else
     {
+        //FIXME: fullyQualifiedName is sloooow. We only need one level for enums declared in static struct Info
         enum helper = "@property " ~ fullyQualifiedName!(typeof(Fields[0])) ~ " " ~ Fields[0].stringof ~ "()\n" ~
             "{\n" ~
             "    import std.typecons; typeof(return) ret;" ~
