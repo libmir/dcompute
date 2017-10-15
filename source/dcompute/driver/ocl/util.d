@@ -36,11 +36,44 @@ struct StringzAccessor(alias ptr) {}
 
 struct ZeroTerminatedArrayAccessor(alias ptr) {}
 
+struct ArrayAccesssor2D(alias ptr, alias lens, alias len) {}
+
+// Returned by ArrayAccesssor2D
+struct RangeOfArray(T)
+{
+    T**     ptr;
+    size_t* lengths;
+    size_t  length;
+    size_t  index;
+
+    bool empty()
+    {
+        return index == length;
+    }
+
+    @property T[] front()
+    {
+        return ptr[index][0 .. lengths[index]];
+    }
+
+    T[] opIndex(size_t i)
+    {
+        return ptr[i][0 .. lengths[i]];
+    }
+    void popFront()
+    {
+        ++index;
+    }
+    
+    @property size_t opDollar() { return length; }
+}
+
 string generateGetInfo(Info,alias func,string args = "raw")()
 {
     import std.string;
     return helper!(Info.tupleof).format(func.stringof,args);
 }
+
 private template helper(Fields...)
 {
     static if (Fields.length == 0)
@@ -64,6 +97,21 @@ private template helper(Fields...)
             "    %1$s(%2$s," ~ __traits(getAttributes, ptr).stringof ~ "[0], memSize(ret), ret.ptr, null);" ~
             "    return ret;" ~
             "}\n" ~ helper!(Fields[1 .. $]);
+    }
+    else static if (is(typeof(Fields[0]) : ArrayAccesssor2D!(ptr,lens,len) , alias ptr, alias lens, alias len))
+    {
+        enum helper = "@property RangeOfArray!(" ~ typeof(**ptr).stringof ~ ") " ~ Fields[0].stringof ~ "()\n" ~
+            "{\n" ~
+            "   import std.typecons; size_t length; size_t* lengths; " ~ typeof(ptr).stringof ~ " ptr;" ~
+            "   %1$s(%2$s," ~ __traits(getAttributes, len).stringof ~ "[0],length.sizeof, &length,null);" ~
+            "   lengths = (new size_t[length]).ptr; ptr = (new " ~ typeof(*ptr).stringof ~ "[length]).ptr;" ~
+            "   %1$s(%2$s," ~ __traits(getAttributes, lens).stringof ~ "[0],lengths.sizeof, &lengths,null);" ~
+            "   foreach(i; 0 .. length) \n{" ~
+            "       ptr[i] = (new " ~ typeof(**ptr).stringof ~ "[lengths[i]]).ptr;" ~
+            "   }\n" ~
+            "   %1$s(%2$s," ~ __traits(getAttributes, ptr).stringof ~ "[0], ptr.sizeof, &ptr, null);"
+            "   return typeof(return)(ptr,lengths,length,0);" ~
+            "\n" ~ helper!(Fields[1 .. $]);
     }
     else
     {
