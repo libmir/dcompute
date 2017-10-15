@@ -86,10 +86,8 @@ struct Context
         import std.stdio;
         Buffer!T ret;
         auto len = memSize(arr);
-        writeln(status," ",arr.ptr," ",arr.length, " ", cast(int)flags);
         ret.raw = clCreateBuffer(raw,flags,len,arr.ptr,cast(int*)&status);
         ret.hostMemory = arr;
-        writeln(status);
         checkErrors();
         return ret;
     }
