@@ -27,7 +27,7 @@ struct Program
     }
     static Program globalProgram;
     cl_program raw;
-    //mixin(generateGetInfo!(Info,clGetProgramInfo));
+    mixin(generateGetInfo!(Info,clGetProgramInfo));
     void retain()
     {
         status = cast(Status)clRetainProgram(raw);
