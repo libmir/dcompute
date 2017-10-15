@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.memory;
+module dcompute.driver.ocl.memory;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 
 struct Memory
 {
@@ -50,7 +50,7 @@ struct Memory
     }
     cl_mem raw;
     
-    mixin generateGetInfo!(clGetMemObjectInfo);
+    //mixin(generateGetInfo!(Info,clGetMemObjectInfo));
     void retain()
     {
         status = cast(Status)clRetainMemObject(raw);

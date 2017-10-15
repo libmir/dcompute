@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.program;
+module dcompute.driver.ocl.program;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 import std.string : toStringz;
 
 struct Program
@@ -19,7 +19,7 @@ struct Program
         
         @(0x1165) size_t* _binarySizes;
         @(0x1166) ubyte** _binaries;
-        @(0x1167) size_t _numKernels;
+        @(0x1167) size_t  _numKernels;
         ArrayAccesssor2D!(_binaries,_binarySizes,_numKernels) binaries;
         
         @(0x1168) char* _kernelNames;
@@ -27,7 +27,7 @@ struct Program
     }
     static Program globalProgram;
     cl_program raw;
-    mixin generateGetInfo!(clGetProgramInfo);
+    mixin(generateGetInfo!(Info,clGetProgramInfo));
     void retain()
     {
         status = cast(Status)clRetainProgram(raw);
@@ -94,5 +94,5 @@ struct Build
         StringzAccessor!(_log) log;
         @(0x1184) BinaryType binaryType;
     }
-    mixin generateGetInfo!(clGetProgramBuildInfo);
+    mixin(generateGetInfo!(Info,clGetProgramBuildInfo,"program.raw,device.raw"));
 }

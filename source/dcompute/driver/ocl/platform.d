@@ -1,17 +1,21 @@
-module dcompute.driver.ocl120.platform;
+module dcompute.driver.ocl.platform;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 import std.experimental.allocator.typed;
 
 struct Platform
 {
+	static void initialise()
+	{
+		DerelictCL.load();
+	}
     static struct Info
     {
-        @(0x0900) char* _profile;
-        @(0x0901) char* _version_;
-        @(0x0902) char* _name;
-        @(0x0903) char* _vendor;
-        @(0x0904) char* _extensions;
+        @(0x0900) immutable(char)* _profile;
+        @(0x0901) immutable(char)* _version_;
+        @(0x0902) immutable(char)* _name;
+        @(0x0903) immutable(char)* _vendor;
+        @(0x0904) immutable(char)* _extensions;
         StringzAccessor!(_profile) profile;
         StringzAccessor!(_version_) version_;
         StringzAccessor!(_name) name;
@@ -21,6 +25,9 @@ struct Platform
         //@(0x0920) khrICDSuffix;
 
     }
+
+    mixin(generateGetInfo!(Info,clGetPlatformInfo));
+
     cl_platform_id raw;
     static Platform[] getPlatforms(A)(A a)
     {
@@ -33,8 +40,6 @@ struct Platform
         checkErrors();
         return cast(Platform[])ret;
     }
-    
-    mixin generateGetInfo!clGetPlatformInfo;
     
     Device[] getDevices(A)(A a,Device.Type device_type = Device.Type.all)
     {
@@ -59,5 +64,5 @@ struct Platform
         return cast(Device[])deviceIDs;
     }
     
-    // clGetExtensionFunconAddressForPlatform
+    // clGetExtensionFunctionAddressForPlatform
 }

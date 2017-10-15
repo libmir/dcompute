@@ -3,7 +3,7 @@ module dcompute.driver.util;
 import std.traits;
 import std.meta;
 import ldc.dcompute : Pointer;
-import dcompute.driver.ocl120.buffer : Buffer;
+import dcompute.driver.ocl.buffer : Buffer;
 template HostArgsOf(F)
 {
     import std.traits;

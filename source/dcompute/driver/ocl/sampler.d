@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.sampler;
+module dcompute.driver.ocl.sampler;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 struct Sampler
 {
     enum FilterMode
@@ -28,7 +28,7 @@ struct Sampler
 
     cl_sampler raw;
     
-    mixin generateGetInfo!(clGetSamplerInfo);
+    //mixin(generateGetInfo!(Info,clGetSamplerInfo));
     void retain()
     {
         status = cast(Status)clRetainSampler(raw);

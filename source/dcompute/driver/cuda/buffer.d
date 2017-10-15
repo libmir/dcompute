@@ -6,7 +6,7 @@ struct Buffer(T)
 {
     size_t raw;
 
-    // Host memory associated with this buffer
+	// Host memory associated with this buffer
     T[] hostMemory;
 
     this(size_t elems)

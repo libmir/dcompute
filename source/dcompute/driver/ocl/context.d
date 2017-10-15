@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.context;
+module dcompute.driver.ocl.context;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 import std.typecons;
 
 import std.experimental.allocator.typed;
@@ -19,10 +19,9 @@ struct Context
     {
         @(0x1080) uint referenceCount;
         @(0x1081) Device* _devices;
-        @(0x1082) Properties* _properties;
-        ZeroTerminatedArrayAccessor!_properties properties;
-        @(0x1083) uint _numDevices;
-        ArrayAccesssor!(_devices,_numDevices) devices;
+        @(0x1082) Context.Properties* properties;
+        @(0x1083) uint numDevices;
+        ArrayAccesssor!(_devices,numDevices) devices;
         // Extensions
         //@(0x2010) khrTerminate;
         //@(0x200E) khrMemoryInitialise;
@@ -40,8 +39,7 @@ struct Context
         //@(0x200C) CGL_SHAREGROUP_KHR
 
     }
-    
-    mixin generateGetInfo!clGetContextInfo;
+    //mixin(generateGetInfo!(Info,clGetContextInfo));
     
     this(Device[] devs,const Properties[] props)
     {
@@ -83,11 +81,13 @@ struct Context
         return ret;
     }
     
-    Buffer!T createBuffer(T)(Memory.Flags flags,T[] arr)
+    Buffer!T createBuffer(T)(T[] arr,Memory.Flags flags = (Memory.Flags.useHostPointer | Memory.Flags.readWrite))
     {
+        import std.stdio;
         Buffer!T ret;
         auto len = memSize(arr);
         ret.raw = clCreateBuffer(raw,flags,len,arr.ptr,cast(int*)&status);
+        ret.hostMemory = arr;
         checkErrors();
         return ret;
     }
@@ -135,6 +135,16 @@ struct Context
                                 cast(int*)&status);
         allocator.dispose(lengths);
         allocator.dispose(ptrs);
+        return ret;
+    }
+    Program createProgram(void[] spirv)
+    {
+        Program ret;
+
+        ret.raw = clCreateProgramWithIL(this.raw,
+										spirv.ptr,
+										spirv.length,
+										cast(int*)&status);
         return ret;
     }
     

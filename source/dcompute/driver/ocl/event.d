@@ -1,6 +1,6 @@
-module dcompute.driver.ocl120.event;
+module dcompute.driver.ocl.event;
 
-import dcompute.driver.ocl120;
+import dcompute.driver.ocl;
 
 struct Event
 {
@@ -63,7 +63,7 @@ struct Event
         @(0x11D3) EcexutionStatus status;
         @(0x11D4) Context context;
     }
-    mixin generateGetInfo!(clGetEventInfo);
+    //mixin(generateGetInfo!(Info,clGetEventInfo));
     
     void retain()
     {
