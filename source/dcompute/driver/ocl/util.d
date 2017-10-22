@@ -74,6 +74,28 @@ string generateGetInfo(Info,alias func,string args = "raw")()
     return helper!(Info.tupleof).format(func.stringof,args);
 }
 
+// A substitute for fullyQualifiedName to speed up compile time
+private template isModule(alias a) {
+    static if (is(a) || is(typeof(a)) || a.stringof.length < 7) {
+        enum isModule = false;
+    } else {
+        enum isModule = a.stringof[0..7] == "module ";
+    }
+}
+
+private template partiallyQualifiedName(alias a) {
+    static if (isModule!a) {
+        enum partiallyQualifiedName = "";
+    } else {
+        static if (!isModule!(__traits(parent, a))) {
+            enum prefix = partiallyQualifiedName!(__traits(parent, a)) ~ ".";
+        } else {
+            enum prefix = "";
+        }
+        enum partiallyQualifiedName = prefix ~ __traits(identifier, a);
+    }
+}
+
 private template helper(Fields...)
 {
     static if (Fields.length == 0)
@@ -116,12 +138,23 @@ private template helper(Fields...)
     }
     else
     {
-        //FIXME: fullyQualifiedName is sloooow. We only need one level for enums declared in static struct Info
-        enum helper = "@property " ~ fullyQualifiedName!(typeof(Fields[0])) ~ " " ~ Fields[0].stringof ~ "()\n" ~
-            "{\n" ~
-            "    import std.typecons; typeof(return) ret;" ~
-            "%1$s(%2$s,"~ __traits(getAttributes, Fields[0]).stringof ~ "[0], ret.sizeof, &ret, null);" ~
-            "return ret; " ~ 
-            "}\n" ~ helper!(Fields[1 .. $]);
-    }
+        static if (is(typeof(Fields[0]) == enum))
+        {
+            enum helper = "@property " ~ partiallyQualifiedName!(typeof(Fields[0])) ~ " " ~ Fields[0].stringof ~ "()\n" ~
+                "{\n" ~
+                "    import std.typecons; typeof(return) ret;" ~
+                "%1$s(%2$s,"~ __traits(getAttributes, Fields[0]).stringof ~ "[0], ret.sizeof, &ret, null);" ~
+                "return ret; " ~ 
+                "}\n" ~ helper!(Fields[1 .. $]);
+    
+        }
+        else 
+        {
+            enum helper = "@property " ~ typeof(Fields[0]).stringof ~ " " ~ Fields[0].stringof ~ "()\n" ~
+                "{\n" ~
+                "    import std.typecons; typeof(return) ret;" ~
+                "%1$s(%2$s,"~ __traits(getAttributes, Fields[0]).stringof ~ "[0], ret.sizeof, &ret, null);" ~
+                "return ret; " ~ 
+                "}\n" ~ helper!(Fields[1 .. $]);
+        }
 }
