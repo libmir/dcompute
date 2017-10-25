@@ -130,7 +130,7 @@ enum Status : int {
 }
 
 //@BUG@ The static this does not appear to work!
-version (D_BetterC)
+version (D_betterC)
 {
     void delegate (Status) nothrow @nogc onDriverError;
     immutable void delegate (Status) nothrow @nogc defaultOnDriverError;
