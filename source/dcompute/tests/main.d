@@ -20,6 +20,9 @@ else version(DComputeTestCUDA)
 else
     static assert(false, "Need to test something!");
 
+// Index of OpenCL 2.1 capable platform returned by Platform.getPlatforms
+enum CL_PLATFORM_INDEX = 2;
+
 int main(string[] args)
 {
     enum size_t N = 128;
@@ -36,7 +39,7 @@ int main(string[] args)
         Platform.initialise();
         onDriverError = (Status _status) { throw new DComputeDriverException(_status); };
         auto platforms = Platform.getPlatforms(theAllocator);
-        auto platform = platforms[2];
+        auto platform = platforms[CL_PLATFORM_INDEX];
         DerelictCL.reload(CLVersion.CL21);
         writeln("Platforms:");
         writeln("\t", platforms.map!(p => p.name));
@@ -48,6 +51,7 @@ int main(string[] args)
         auto plist    = propertyList!(Context.Properties)(Context.Properties.platform, platform.raw);
         writeln(plist);
         auto ctx      = Context(devices[0 ..1],null /*FIXME: plist[]*/);
+	// Change the file to the built OpenCL version.
         Program.globalProgram = ctx.createProgram(cast(ubyte[])read("./.dub/obj/kernels_ocl200_64.spv"));
 
         try
