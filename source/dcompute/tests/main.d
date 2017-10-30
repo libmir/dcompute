@@ -14,9 +14,9 @@ import std.array;
 import dcompute.tests.dummykernels : saxpy;
 
 version(DComputeTestOpenCL)
-	import dcompute.driver.ocl;
+    import dcompute.driver.ocl;
 else version(DComputeTestCUDA)
-	import dcompute.driver.cuda;
+    import dcompute.driver.cuda;
 else
     static assert(false, "Need to test something!");
 
@@ -69,14 +69,13 @@ int main(string[] args)
         b_y = ctx.createBuffer(y[],Memory.Flags.useHostPointer | Memory.Flags.readWrite);
 
         Event e = queue.enqueue!(saxpy)([N])(b_res,alpha,b_x,b_y, N);
-        
         e.wait();
     }
 
     version(DComputeTestCUDA)
     {
         Platform.initialise();
-		
+	
         auto devs = Platform.getDevices(theAllocator);
         auto dev   = devs[0]; 
         auto ctx   = Context(dev); scope(exit) ctx.detach();
@@ -97,7 +96,6 @@ int main(string[] args)
                   ([N,1,1],[1,1,1])
                   (b_res,alpha,b_x,b_y, N);
         b_res.copy!(Copy.deviceToHost);
-	
     }
 
     foreach(i; 0 .. N)
