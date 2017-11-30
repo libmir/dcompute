@@ -13,7 +13,7 @@ private import cuda = dcompute.std.cuda.index;
  GlobalIndex.xyz        blockDim*blockIdx+threadIdx get_global_id()
  
  
- GroupDimension.zyx     gridDim                     get_num_groups()
+ GroupDimension.xyz     gridDim                     get_num_groups()
  GroupIndex.xyz         blockIdx                    get_group_id()
  
  SharedDimension.xyz    blockDim                    get_local_size()
