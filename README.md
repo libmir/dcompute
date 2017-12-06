@@ -59,7 +59,7 @@ A dmd compatible d compiler,[dmd](https://github.com/dlang/dmd), ldmd or gdmd (a
  
 ## Getting Started
 
-Please see the [wiki](https://github.com/libmir/dcompute/wiki).
+Please see the [documentation](https://github.com/libmir/dcompute/blob/master/docs/README.md).
 
 ## TODO
 

@@ -1,6 +1,6 @@
 ##Welcome to the DCompute documentation!
 
-DCompute is a library that together with a modified ldc is able to make D compile on GPU.
+DCompute is a library that together with LDC is able to make D compile on GPU.
 
 Dcompute is split into three sections, a driver, a standard library and a set of prewritten kernels.
 
@@ -19,7 +19,7 @@ These docs are designed to help getting started installing & using DCompute.
 3. Writing kernels
 4. The device standard library
 4.1 index
-
+5. The compute API driver
 
 ##D
 
