@@ -138,7 +138,7 @@ version (D_betterC)
     {
         defaultOnDriverError = (Status _status)
         {
-            import core.stdc.stdio : stderr;
+            import core.stdc.stdio : fprintf, stderr;
             import std.conv : to;
             fprintf(stderr,"*** DCompute driver error:%s\n",
                    _status.to!(string).toStringz);
