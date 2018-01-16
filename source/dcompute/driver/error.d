@@ -132,47 +132,48 @@ enum Status : int {
 //@BUG@ The static this does not appear to work!
 version (D_betterC)
 {
-    void delegate (Status) nothrow @nogc onDriverError;
-    immutable void delegate (Status) nothrow @nogc defaultOnDriverError;
-    static this()
+    void delegate (Status) nothrow @nogc onDriverError = (Status _status) 
+    { 
+        defaultOnDriverError(_status);
+    };
+    
+    immutable void delegate (Status) nothrow @nogc defaultOnDriverError = 
+    (Status _status)
     {
-        defaultOnDriverError = (Status _status)
-        {
-            import core.stdc.stdio : fprintf, stderr;
-            import std.conv : to;
-            fprintf(stderr,"*** DCompute driver error:%s\n",
-                   _status.to!(string).toStringz);
-        };
-    }
+        import core.stdc.stdio : fprintf, stderr;
+        import std.conv : to;
+        fprintf(stderr,"*** DCompute driver error:%s\n",
+               _status.to!(string).toStringz);
+    };
 }
 else
 {
     class DComputeDriverException : Exception
     {
-        this(string msg, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
+        this(string msg, string file = __FILE__,
+             size_t line = __LINE__, Throwable next = null)
         {
             super(msg, file, line, next);
         }
         
-        this(Status err, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
+        this(Status err, string file = __FILE__, 
+             size_t line = __LINE__, Throwable next = null)
         {
             import std.conv : to;
             super(err.to!string, file, line, next);
         }
     }
-    void delegate(Status) onDriverError;
-    immutable void delegate(Status) defaultOnDriverError;
-    static this()
+    void delegate(Status) onDriverError = (Status _status) 
     {
-        defaultOnDriverError = (Status _status)
-        {
-            throw new DComputeDriverException(_status);
-        };
-    }
+        defaultOnDriverError(_status);
+    };
+    immutable void delegate(Status) defaultOnDriverError;
+    (Status _status)
+    {
+        throw new DComputeDriverException(_status);
+    };
 }
- static this() { 
-    onDriverError = (Status _status) { defaultOnDriverError(_status);};
-}
+
 // Thread local status
 Status status;
 
@@ -188,8 +189,3 @@ else
     }
 
 }
-
-
-
-
-
