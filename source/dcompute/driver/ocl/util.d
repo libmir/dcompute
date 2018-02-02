@@ -157,4 +157,5 @@ private template helper(Fields...)
                 "return ret; " ~ 
                 "}\n" ~ helper!(Fields[1 .. $]);
         }
+    }
 }
