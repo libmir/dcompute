@@ -63,3 +63,11 @@ import ldc.dcompute;
 Its not a very useful kernel because it only assigns to the first element of `a`.
 
 Compile with `ldc2 -mdcompute-targets=ocl-210,cuda-350 -oq` to target OpenCL 2.1 and CUDA SM 3.5.
+
+Non D kernels
+-------------
+
+While a major part of DCompute is being able to write kernels in D, there is nothing stopping 
+you using it as a nicer wrapper for kernels written in e.g. OpenCL C or CUDA. 
+All that you need to ensure is that the (mangled) name and signature of the kernels D declaration match
+with its definition in the other language and you can use it as is it were a D kernel.
