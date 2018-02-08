@@ -44,7 +44,7 @@ The table below shows the equivalent terms in DCompute, OpenCL and CUDA.
 |   Constant | `__constant` |  `__constant__`  |
 |   Private  | `__private`  |  `__local__ `    |
 |   Generic  | `__generic`  | (no qualifier) |
-|------------|------------|----------------|
+
 
 Hello World
 -----------
