@@ -1,4 +1,5 @@
-#Hardware
+Hardware
+========
 
 Writing code for DCompute kernels is a bit different from reuglar CPU programming.
 
@@ -15,19 +16,21 @@ Due to the large number of concurrent threads, it is very easy to end up with a
 data race, not help by the fact that any synchronisation (fences, atomics) must
 be done manually. Fences and atomics can be quite expensive.
 
-##CPUs
-
+CPUs
+----
 Caches are present and reasonable in size. Vectors are relatively short. Branch
 prediction is good.
 
-##GPUs
+GPUs
+----
 
 Caches may be present but are much smaller relative to the number of threads.
 Vectors are generally wider than CPUs. Branch prediction is absent. Top level
 dcache is small, you really dont want to spill your stack. Texture fetch means
 you can load from nearby in 2D or 3D efficiently.
 
-##FPGAs
+FPGAs
+-----
 
 Instructions are in hardware, each and every one of them counts: shrinking your
 instruction count can increase your vector width as vector width is determined
