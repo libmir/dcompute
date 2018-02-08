@@ -1,4 +1,6 @@
-#Kernels
+Kernels
+=======
+
 At the heart of DCompute is are the special attributes `@compute` and `@kernel` from the module `ldc.dcompute`
 
 `@compute` tell the d compiler that this module should be built to target the device. 
@@ -9,7 +11,8 @@ At the heart of DCompute is are the special attributes `@compute` and `@kernel` 
 i.e. you can tell the driver to execute this function on the device, 
 whereas you can't for functions that aren't marked `@kernel`.
 
-##Address Spaces 
+Address Spaces 
+--------------
 
 Also critical in using DCompute is the notion of address spaced pointers.
 These are available from the module `ldc.dcompute` in the form of the magic template
@@ -43,7 +46,8 @@ The table below shows the equivalent terms in DCompute, OpenCL and CUDA.
 |   Generic  | __generic  | (no qualifier) |
 |------------|------------|----------------|
 
-##Hello World
+Hello World
+-----------
 
 About the simplest kernel you can have is shown below (note that @kernel functions MUST return `void` or you'll get errors)
 
