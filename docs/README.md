@@ -48,7 +48,7 @@ may be written as `x.f`, allows you to write chains of call `h(g(f(x)))` as `x.f
 `class`es as are polymorphic reference types. `struct`s are value types. Idomatic D code 
 tends to use structs over classes. Classes are not used at all in DCompute.
 
-The `.` operator will implicity follow any pointers, although it will no dereference the last
+The `.` operator will implicity follow any pointers, although it will not dereference the last
 one in a chain of `.`s. There is no operator `->` or `::`, these are both handled by `.`.
 
 `static if` is D's conditional compilation construct. Code inside a taken branch is compiled 
