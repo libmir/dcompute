@@ -1,4 +1,5 @@
-#Index
+Index
+=====
 
 To do anything useful with DCompute a thread needs to know it's index, it's position.
 If you take a look at `dcompute.std.index` you'll see there are quite a few to choose from.
@@ -11,8 +12,8 @@ Index Terminology:
 
 | DCompute           | CUDA                        | OpenCL
 |--------------------|-----------------------------|--------
-| GlobalDimension    | gridDim*blockDim            | get_global_size()
-| GlobalIndex        | blockDim*blockIdx+threadIdx | get_global_id()
+| GlobalDimension    | `gridDim*blockDim`            | get_global_size()
+| GlobalIndex        | `blockDim*blockIdx+threadIdx` | get_global_id()
 |                    |                             |
 | GroupDimension     | gridDim                     | get_num_groups()
 | GroupIndex         | blockIdx                    | get_group_id()
@@ -50,7 +51,8 @@ a[i] = b[i] + c;
 
 With the same command line as before.
 
-##Autoindex
+Autoindex
+---------
 
 `AutoIndexed` is a type that automatically indexes a `GlobalPointer` or `SharedPointer` 
 for making kernel lambda nicer to use.
