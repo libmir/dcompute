@@ -39,11 +39,11 @@ The table below shows the equivalent terms in DCompute, OpenCL and CUDA.
 
 |  DCompute  |  OpenCL    |   CUDA         |
 |------------|------------|----------------|
-|   Global   | __global   |  __device__    |
-|   Shared   | __local    |  __shared__    |
-|   Constant | __constant |  __constant__  |
-|   Private  | __private  |  __local__     |
-|   Generic  | __generic  | (no qualifier) |
+|   Global   | `__global`   |  `__device__`    |
+|   Shared   | `__local`    |  `__shared__`    |
+|   Constant | `__constant` |  `__constant__`  |
+|   Private  | `__private`  |  `__local__ `    |
+|   Generic  | `__generic`  | (no qualifier) |
 |------------|------------|----------------|
 
 Hello World
