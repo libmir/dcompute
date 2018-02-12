@@ -12,7 +12,7 @@ enable native execution of D on GPUs (and other more exotic targets of OpenCL su
 
 There are four main parts: 
 * [std](https://github.com/libmir/dcompute/tree/master/source/dcompute/std): A library containing standard functionality for targetting GPUs and abstractions over the intrinsics of OpenCL and CUDA.
-* [driver](https://github.com/libmir/dcompute/tree/master/source/dcompute/driver): For handling all the compute API interactions and provide a friendly, easy-to-use, consistent interface. Of course you can always get down to a lower level of interaction if you need to.
+* [driver](https://github.com/libmir/dcompute/tree/master/source/dcompute/driver): For handling all the compute API interactions and provide a friendly, easy-to-use, consistent interface. Of course you can always get down to a lower level of interaction if you need to. You can also use this to execute non-D kernels (e.g. OpenCL or CUDA).
 * [kernels](https://github.com/libmir/dcompute/tree/master/source/dcompute/kernels): A set of standard kernels and primitives to cover a large number of use cases and serve as documentation on how (and how not) to use this library.
 * [tests](https://github.com/libmir/dcompute/tree/master/source/dcompute/tests): A framework for testing kernels. The suite is runnable with `dub test` (see `dub.json` for the configuration used).
 
