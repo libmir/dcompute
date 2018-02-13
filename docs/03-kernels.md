@@ -71,3 +71,27 @@ While a major part of DCompute is being able to write kernels in D, there is not
 you using it as a nicer wrapper for kernels written in e.g. OpenCL C or CUDA. 
 All that you need to ensure is that the (mangled) name and signature of the kernels D declaration match
 with its definition in the other language and you can use it as is it were a D kernel.
+
+For OpenCL this means declaring the kernels `extern(C)`, for CUDA `extern(C++)` unless the kernel is declared 
+`extern "C"`, in which case use `extern(C)`. You will also need to alter the build process to compile and link
+the foreign kernel.
+
+E.g.
+OpenCL:
+```opencl
+__kernel void foo() {}
+```
+
+CUDA:
+```cuda
+extern "C" __global__ void foo() {}
+```
+
+D:
+```d
+@compute(CompileFor.deviceOnly)
+module bar;
+
+extern(C) @kernel void foo();
+```
+
