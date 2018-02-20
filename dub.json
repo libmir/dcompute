@@ -9,7 +9,7 @@
         "derelict-cuda": "~>2.0.1",
         "taggedalgebraic": "~>0.10.7"
     },
-    "dflags" : ["-mdcompute-targets=cuda-210" ,"-oq", "-betterC"],
+    "dflags" : ["-mdcompute-targets=cuda-210" ,"-oq"],
     "configurations": [
         {
             "name": "library",
