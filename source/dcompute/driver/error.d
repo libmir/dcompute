@@ -129,7 +129,6 @@ enum Status : int {
     EGLResourceNotAcquired         = -1092,
 }
 
-//@BUG@ The static this does not appear to work!
 version (D_betterC)
 {
     void delegate (Status) nothrow @nogc onDriverError = (Status _status) 
@@ -167,7 +166,7 @@ else
     {
         defaultOnDriverError(_status);
     };
-    immutable void delegate(Status) defaultOnDriverError;
+    immutable void delegate(Status) defaultOnDriverError =
     (Status _status)
     {
         throw new DComputeDriverException(_status);
