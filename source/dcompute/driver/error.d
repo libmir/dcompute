@@ -129,7 +129,7 @@ enum Status : int {
     EGLResourceNotAcquired         = -1092,
 }
 
-version (D_betterC)
+version (D_BetterC)
 {
     void delegate (Status) nothrow @nogc onDriverError = (Status _status) 
     { 
