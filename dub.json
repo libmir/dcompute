@@ -5,8 +5,8 @@
     "authors": ["Nicholas Wilson"],
     "license": "BSL-1.0",
     "dependencies": {
-        "derelict-cl"  : "~>2.0.0",
-        "derelict-cuda": "~>2.0.1",
+        "derelict-cl"  : "~>3.2.0",
+        "derelict-cuda": "~>3.1.1",
         "taggedalgebraic": "~>0.10.7"
     },
     "dflags" : ["-mdcompute-targets=cuda-210" ,"-oq"],
