@@ -7,8 +7,8 @@
 
 ## About
 
-This project is a set of libraries designed to work with [ldc][1] to 
-enable native execution of D on GPUs (and other more exotic targets of OpenCL such as FPGAs DSPs, hereafter just 'GPUs') on the OpenCL and CUDA runtimes.
+This project is a set of libraries designed to work with [LDC][1] to 
+enable native execution of D on GPUs (and other more exotic targets of OpenCL such as FPGAs DSPs, hereafter just 'GPUs') on the OpenCL and CUDA runtimes. As DCompute depends on developments in LDC for the code generation, a relatively recent LDC is required, use [1.8.0](https://github.com/ldc-developers/ldc/releases/tag/v1.8.0) or newer.
 
 There are four main parts: 
 * [std](https://github.com/libmir/dcompute/tree/master/source/dcompute/std): A library containing standard functionality for targetting GPUs and abstractions over the intrinsics of OpenCL and CUDA.
