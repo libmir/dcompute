@@ -1,4 +1,4 @@
-##Welcome to the DCompute documentation!
+## Welcome to the DCompute documentation!
 
 DCompute is a library that together with LDC is able to make D compile on GPU.
 
@@ -11,7 +11,7 @@ The standard library contains the set of primitive operations exposed by the com
 
 These docs are designed to help getting started installing & using DCompute. 
 
-##Table of Contents
+## Table of Contents
 
 0. Prerequisites to using DCompute
 1. Installing DCompute
@@ -21,7 +21,7 @@ These docs are designed to help getting started installing & using DCompute.
 4.1 index
 5. The compute API driver
 
-##D
+## D
 
 This guide assumes that the reader is familiar with the basics of D, although anyone 
 familiar with the C family of languages should be able to understand most of it.
