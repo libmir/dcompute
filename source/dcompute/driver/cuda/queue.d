@@ -90,8 +90,7 @@ struct Queue
                                        q.raw,
                                        vargs.ptr,
                                        null);
-                                       
-                
+                checkErrors();
             }
         }
         

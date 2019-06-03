@@ -26,17 +26,19 @@ struct Buffer(T)
     {
         static if (c == Copy.hostToDevice)
         {
-            cuMemcpyHtoD(raw, hostMemory.ptr,hostMemory.length * T.sizeof);
+            status = cast(Status)cuMemcpyHtoD(raw, hostMemory.ptr,hostMemory.length * T.sizeof);
         }
         else static if  (c == Copy.deviceToHost)
         {
-            cuMemcpyDtoH(hostMemory.ptr,raw,hostMemory.length * T.sizeof);
+            status = cast(Status)cuMemcpyDtoH(hostMemory.ptr,raw,hostMemory.length * T.sizeof);
         }
+        checkErrors();
     }
     alias hostArgOf(U : GlobalPointer!T) = raw; 
     void release()
     {
-        cuMemFree(raw);
+        status = cast(Status)cuMemFree(raw);
+        checkErrors();
         raw = 0;
         hostMemory = null;
     }
