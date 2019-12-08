@@ -172,7 +172,7 @@ struct GroupIndex
         if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_group_id(0);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
-            return cuda.ntid_x();
+            return cuda.ctaid_x();
         else
             assert(0);
     }
@@ -182,7 +182,7 @@ struct GroupIndex
         if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_group_id(1);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
-            return cuda.ntid_y();
+            return cuda.ctaid_y();
         else
             assert(0);
     }
@@ -192,7 +192,7 @@ struct GroupIndex
         if(__dcompute_reflect(ReflectTarget.OpenCL,0))
             return ocl.get_group_id(2);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
-            return cuda.ntid_z();
+            return cuda.ctaid_z();
         else
             assert(0);
     }
