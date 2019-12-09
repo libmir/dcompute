@@ -107,4 +107,18 @@ struct Device
     }
     
     //char[] name : cuDeviceGetName
+
+    static foreach (mem; __traits(allMembers, Info)) {
+        mixin(
+            ` @property int `,
+            mem,
+            ` () { int result; `,
+            ` status = cast(Status)cuDeviceGetAttribute( `,
+            ` &result, `,
+             __traits(getAttributes, __traits(getMember, Info, mem))[0].stringof,
+            `, raw); `,
+            ` checkErrors(); `,
+            ` return result; `,
+            ` } `);
+    }
 }
