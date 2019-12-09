@@ -117,6 +117,7 @@ struct Device
             ` &result, `,
              __traits(getAttributes, __traits(getMember, Info, mem))[0].stringof,
             `, raw); `,
+            ` checkErrors(); `,
             ` return result; `,
             ` } `);
     }
