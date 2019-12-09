@@ -28,7 +28,7 @@ enum Status : int {
     notMapped                   = 211,
     notMappedAsArray            = 212,
     notMappedAsPointer          = 213,
-    eccUncorrectagle            = 214,
+    eccUncorrectable            = 214,
     unsupportedLimit            = 215,
     contextAlredyInUse          = 216,
     peerAccessUnsupported       = 217,
