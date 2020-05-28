@@ -1,10 +1,10 @@
 Hardware
 ========
 
-Writing code for DCompute kernels is a bit different from reuglar CPU programming.
+Writing code for DCompute kernels is a bit different from regular CPU programming.
 
 Most noticable is that you write the kernel as the body of a for loop that is then
-vectorised and run in parallel by the `device`. As a consequence of this there are
+vectorised and run in parallel by the `device`. As a consequence of this, there are
 no sequencing guaruntees and branching is done as vector mask operations. This
 includes `while` style loops, they will continue until every lane of the vector has
 completed the loop.
