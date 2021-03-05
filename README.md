@@ -35,12 +35,12 @@ Kernel:
 Invoke with (CUDA):
 ```
 q.enqueue!(saxpy)
-    ([N,1,1],[1,1,1]) // Block & grid & optional shared memory
+    ([N,1,1],[1,1,1]) // Grid & block & optional shared memory
     (b_res,alpha,b_x,b_y, N); // kernel arguments
 ```
 equivalent to the CUDA code
 ```
-saxpy<<<N,1,0,q>>>(b_res,alpha,b_x,b_y, N);
+saxpy<<<1,N,0,q>>>(b_res,alpha,b_x,b_y, N);
 ```
 
 For more examples and the full code see `source/dcompute/tests`.
