@@ -7,12 +7,12 @@ struct Queue
     void* raw;
     this (bool async)
     {
-        status = cast(Status)cuStreamCreate(&raw,async ? 0 : 1);
+        status = cast(Status)cuStreamCreate(&raw, async ? 1 : 0);
         checkErrors();
     }
     this (bool async, int priority)
     {
-        status = cast(Status)cuStreamCreateWithPriority(&raw,async ? 0 : 1,priority);
+        status = cast(Status)cuStreamCreateWithPriority(&raw, async ? 1 : 0, priority);
         checkErrors();
     }
     
