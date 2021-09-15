@@ -86,7 +86,7 @@ struct Queue
         if(localWorkSize)
             assert(globalWorkSize.length == localWorkSize.length);
     }
-    body
+    do
     {
         static struct Call
         {
