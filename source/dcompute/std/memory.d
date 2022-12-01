@@ -36,7 +36,7 @@ SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
         %vptr = bitcast %Dummy* %.structliteral to i8*
         ret i8* %vptr
             `, ``, void*)();
-    return *(cast(SharedPointer!(uint)*)address);
+    return *(cast(SharedPointer!(T)*)address);
 }
 
 package:
