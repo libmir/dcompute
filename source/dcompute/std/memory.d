@@ -21,67 +21,27 @@ pragma(LDC_inline_ir)
        Returns a tuple of {SharedPointer!(align(A) T), length} "arrays"
  */
 
-alias SharedArr = ulong;
-
-SharedArr sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
-    ulong address = __irEx!(`@`~uniqueName~` = addrspace(3) global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4 ;
+SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
+    void* address = __irEx!(`@`~uniqueName~` = addrspace(3) global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4 ;
+        %Dummy = type { `~llvmType!T~` addrspace(3)* }    
             `, `
-        %el0 = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(3)* @`~uniqueName~`, `~llvmType!T~` 0, i64 0
-        %ptrint = ptrtoint `~llvmType!T~` addrspace(3)* %el0 to i64
-        ret i64 %ptrint
-            `, ``, ulong)();
-    return address;
+        %sharedptr = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(3)* @`~uniqueName~`, `~llvmType!T~` 0, i64 0
+  
+        %.structliteral = alloca %Dummy, align 8 
+
+        %dumptr = getelementptr inbounds %Dummy, %Dummy* %.structliteral, i32 0, i32 0
+
+        store `~llvmType!T~` addrspace(3)* %sharedptr, `~llvmType!T~` addrspace(3)** %dumptr
+        
+        %vptr = bitcast %Dummy* %.structliteral to i8*
+        ret i8* %vptr
+            `, ``, void*)();
+    return *(cast(SharedPointer!(uint)*)address);
 }
 
-void setSharedVal(T)(SharedArr ptrint, size_t index, uint val){
-    inlineIR!(`
-        %sptr = inttoptr i64 %0 to `~llvmType!T~` addrspace(3)*
-        %lptr = getelementptr inbounds `~llvmType!T~`, `~llvmType!T~` addrspace(3)* %sptr, i64 %1
-        store `~llvmType!T~` %2, `~llvmType!T~` addrspace(3)* %lptr, align 4
-        ret void`,void)(ptrint, index, val);
-}
-
-
-T getSharedVal(T)(SharedArr ptrint, size_t index){
-    return inlineIR!(` 
-        %sptr = inttoptr i64 %0 to `~llvmType!T~` addrspace(3)*
-        %lptr = getelementptr inbounds `~llvmType!T~`, `~llvmType!T~` addrspace(3)* %sptr, i64 %1
-        %r = load `~llvmType!T~`, `~llvmType!T~` addrspace(3)* %lptr, align 4    
-        ret `~llvmType!T~` %r`, T)(ptrint, index);
-}
-
-/+
-SharedPointer!T sharedStaticReserve(T: T[N], string uuid, size_t N)()
-{
-    /++ 
-      TODO: 
-      -check uid (var name) for compliance
-      -check N for max available size in terms of microarchitecture of device (fermi, kepler etc) 
-
-     +/
-    
-    void* _vp = __irEx!(`
-        @`~uuid~` = addrspace(3) global [`~Itoa!(N)~` x `~llvmType!T~`] zeroinitializer, align 4 ;
-        %SharedType = type { `~llvmType!T~` addrspace(3)* }
-            `, `
-        %el0 = getelementptr inbounds [`~Itoa!(N)~` x `~llvmType!T~`], [`~Itoa!(N)~` x `~llvmType!T~`] addrspace(3)* @`~uuid~`, `~llvmType!T~` 0, i64 0
-        %SharedTypePtr = alloca %SharedType, align 4
-        %tmp = getelementptr inbounds %SharedType, %SharedType* %SharedTypePtr, `~llvmType!T~` 0, `~llvmType!T~` 0
-        store `~llvmType!T~` addrspace(3)* %el0, `~llvmType!T~` addrspace(3)** %tmp, align 8
-        %retptr = bitcast %SharedType* %SharedTypePtr to i8*
-        ret i8* %retptr
-        `, ``, void*)();
-
-        SharedPointer!T _sptr = *cast(SharedPointer!(T)*)_vp;
-        return _sptr;
-}
-+/
 package:
 immutable(string) Digit(size_t n)()
-{ // "0123456789"[n..n+1]; does not work either
-
-    //enum Digit = `0123456789`[n..n+1];
-
+{
     static if(n == 0)
 	    return 0.stringof;
     else static if(n == 1)
