@@ -21,6 +21,8 @@ pragma(LDC_inline_ir)
        Returns a tuple of {SharedPointer!(align(A) T), length} "arrays"
  */
 
+@nogc nothrow:
+
 SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
     void* address = __irEx!(`@`~uniqueName~` = addrspace(3) global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4 ;
         %Dummy = type { `~llvmType!T~` addrspace(3)* }    
@@ -39,7 +41,6 @@ SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
     return *(cast(SharedPointer!(T)*)address);
 }
 
-package:
 immutable(string) Digit(size_t n)()
 {
     static if(n == 0)
