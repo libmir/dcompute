@@ -1,4 +1,6 @@
-module dcompute.std.cuda.math;
+@compute(CompileFor.hostAndDevice) module dcompute.std.cuda.math;
+
+import ldc.dcompute;
 
 /++ auto-generated intrinsics definitions from CUDA 10.2 - libdevice.10.bc
     the generator python script is available at the end of this file
