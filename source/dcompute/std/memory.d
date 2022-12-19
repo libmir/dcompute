@@ -27,7 +27,7 @@ SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
     void* address = __irEx!(`@`~uniqueName~` = addrspace(3) global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4 ;
         %Dummy = type { `~llvmType!T~` addrspace(3)* }    
             `, `
-        %sharedptr = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(3)* @`~uniqueName~`, `~llvmType!T~` 0, i64 0
+        %sharedptr = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(3)* @`~uniqueName~`, i32 0, i32 0
   
         %.structliteral = alloca %Dummy, align 8 
 
