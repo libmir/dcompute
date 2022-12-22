@@ -41,6 +41,17 @@ SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
     return *(cast(SharedPointer!(T)*)address);
 }
 
+immutable(T)* constStaticReserve(T : T[N], string uniqueName, size_t N)(){
+    immutable(T)* address = __irEx!(`@`~uniqueName~` = addrspace(4) externally_initialized global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4
+            `, `
+        %mptr = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(4)* @`~uniqueName~`, i32 0, i32 0
+
+        %r = addrspacecast `~llvmType!T~` addrspace(4)* %mptr to `~llvmType!T~`*
+        ret `~llvmType!T~`* %r
+            `, ``, immutable(T)*)();
+    return address;
+}
+
 immutable(string) Digit(size_t n)()
 {
     static if(n == 0)
