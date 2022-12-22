@@ -13,6 +13,9 @@ struct float4
     float4 opBinary(string op)(float s) if (op == "+"){
         return float4(x+s, y+s, z+s, w+s);
     }
+    float4 opBinary(string op)(float s) if (op == "-"){
+        return float4(x-s, y-s, z-s, w-s);
+    }
     float4 opBinary(string op)(float s) if (op == "*") {
         return float4(x*s, y*s, z*s, w*s);
     }
@@ -23,7 +26,17 @@ struct float4
     float4 opBinary(string op)(float4 other){
         static if (op == "+"){
             return float4(x+other.x, y+other.y, z+other.z, w+other.w);
-        } else
+        }else
+        static if (op == "-"){
+            return float4(x-other.x, y-other.y, z-other.z, w-other.w);
+        }else
+        static if (op == "*"){
+            return float4(x*other.x, y*other.y, z*other.z, w*other.w);
+        }else
+        static if (op == "/"){
+            return float4(x/other.x, y/other.y, z/other.z, w/other.w);
+        }
+        else
             static assert(0, "op is not implemented");
     }
 }
