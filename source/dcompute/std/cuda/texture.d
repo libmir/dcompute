@@ -1,4 +1,8 @@
-module dcompute.std.cuda.texture;
+@compute(CompileFor.deviceOnly)
+module bilateral;
+pragma(LDC_no_moduleinfo);
+
+import ldc.dcompute;
 
 // CUDA texture sampling return types
 struct int4
@@ -9,7 +13,9 @@ struct int4
 struct float4
 {
     float x, y, z, w;
-
+    
+    @nogc nothrow:
+    
     float4 opBinary(string op)(float s) if (op == "+"){
         return float4(x+s, y+s, z+s, w+s);
     }
