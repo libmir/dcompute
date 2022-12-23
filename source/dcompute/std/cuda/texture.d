@@ -41,6 +41,7 @@ struct float4
     }
 }
 
+@nogc nothrow:
 // Sampling a 1D texture:
 
 //%float4 @llvm.nvvm.tex.unified.1d.v4f32.s32(i64 %tex, i32 %x)
