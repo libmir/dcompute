@@ -52,15 +52,28 @@ SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
     This type is immutable for device, but the memory can be updated in host code.
 +/
 immutable(T)* constStaticReserve(T : T[N], string uniqueName, size_t N)(){
-    immutable(T)* address = __irEx!(`@`~uniqueName~` = addrspace(4) externally_initialized global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4
+    if(__dcompute_reflect(ReflectTarget.CUDA)){
+        immutable(T)* address = __irEx!(`@`~uniqueName~` = addrspace(4) externally_initialized global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4
             `, `
-        %mptr = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(4)* @`~uniqueName~`, i32 0, i32 0
+            %mptr = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(4)* @`~uniqueName~`, i32 0, i32 0
 
-        %r = addrspacecast `~llvmType!T~` addrspace(4)* %mptr to `~llvmType!T~`*
-        ret `~llvmType!T~`* %r
+            %r = addrspacecast `~llvmType!T~` addrspace(4)* %mptr to `~llvmType!T~`*
+            ret `~llvmType!T~`* %r
             `, ``, immutable(T)*)();
-    return address;
-    // returning a ConstPointer!T causes an LLVM error for CUDA backend. immutable(T)* is a convenient type anyway.
+        return address;
+	// returning a ConstPointer!T causes an LLVM error for CUDA backend. immutable(T)* is a convenient type anyway.
+    } else if(__dcompute_reflect(ReflectTarget.OpenCL)){
+	immutable(T)* address = __irEx!(`@`~uniqueName~` = addrspace(2) global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4
+            `, `
+            %mptr = getelementptr inbounds [`~Itoa!N~` x `~llvmType!T~`], [`~Itoa!N~` x `~llvmType!T~`] addrspace(2)* @`~uniqueName~`, i32 0, i32 0
+
+            %r = addrspacecast `~llvmType!T~` addrspace(2)* %mptr to `~llvmType!T~`*
+            ret `~llvmType!T~`* %r
+            `, ``, immutable(T)*)();
+        return address;
+    } else
+	assert(0);
+    
 }
 
 immutable(string) Digit(size_t n)()
