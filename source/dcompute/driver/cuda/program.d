@@ -22,6 +22,12 @@ struct Program
     //cuModuleGetGlobal
     //cuModuleGetTexRef
     //cuModuleGetSurfRef
+    static size_t getGlobal(ref size_t bytes, immutable(char)* name){
+        size_t globptr;
+        status = cast(Status)cuModuleGetGlobal(&globptr, &bytes, globalProgram.raw, name);
+        checkErrors();
+        return globptr;
+    }
     
     static Program fromFile(string name)
     {
