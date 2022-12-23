@@ -23,6 +23,8 @@ pragma(LDC_inline_ir)
 
 @nogc nothrow:
 
+// SharedPointer and constant memory allocations, only tested for Cuda backend
+
 SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
     void* address = __irEx!(`@`~uniqueName~` = addrspace(3) global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4 ;
         %Dummy = type { `~llvmType!T~` addrspace(3)* }    
@@ -41,6 +43,14 @@ SharedPointer!T sharedStaticReserve(T : T[N], string uniqueName, size_t N)(){
     return *(cast(SharedPointer!(T)*)address);
 }
 
+/+ defines and allocates a global constant. Host code must initialize this array like
+	`
+	size_t nbytes;
+    	size_t _gaussConstAddr = Program.getGlobal(nbytes, "gauss0"); // uniqueName must match here
+    	cuMemcpyHtoD(_gaussConstAddr, Gaussian.ptr, nbytes);
+	`
+    This type is immutable for device, but the memory can be updated in host code.
++/
 immutable(T)* constStaticReserve(T : T[N], string uniqueName, size_t N)(){
     immutable(T)* address = __irEx!(`@`~uniqueName~` = addrspace(4) externally_initialized global [`~Itoa!N~` x `~llvmType!T~`] zeroinitializer, align 4
             `, `
@@ -50,6 +60,7 @@ immutable(T)* constStaticReserve(T : T[N], string uniqueName, size_t N)(){
         ret `~llvmType!T~`* %r
             `, ``, immutable(T)*)();
     return address;
+    // returning a ConstPointer!T causes an LLVM error for CUDA backend. immutable(T)* is a convenient type anyway.
 }
 
 immutable(string) Digit(size_t n)()
