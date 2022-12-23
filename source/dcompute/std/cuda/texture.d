@@ -1,5 +1,5 @@
 @compute(CompileFor.deviceOnly)
-module bilateral;
+module dcompute.std.cuda.texture;
 pragma(LDC_no_moduleinfo);
 
 import ldc.dcompute;
