@@ -1,6 +1,7 @@
 module dcompute.driver.ocl.program;
 
 import dcompute.driver.ocl;
+import std.meta: AliasSeq;
 import std.string : toStringz;
 
 struct Program
