@@ -2,6 +2,7 @@ module dcompute.driver.ocl.platform;
 
 import dcompute.driver.ocl;
 import std.experimental.allocator.typed;
+import std.meta: AliasSeq;
 
 struct Platform
 {

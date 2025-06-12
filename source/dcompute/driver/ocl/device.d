@@ -2,6 +2,7 @@ module dcompute.driver.ocl.device;
 
 import derelict.opencl.cl;
 import dcompute.driver.ocl;
+import std.meta: AliasSeq;
 
 struct Device
 {
