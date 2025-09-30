@@ -50,8 +50,24 @@ To build DCompute you will need:
 * [ldc][1] as the D dcompiler.
 * a SPIRV capable LLVM (available [here](https://github.com/thewilsonator/llvm/tree/compute) to build ldc to to support SPIRV (required for OpenCL)).
 * or LDC built with any LLVM 3.9.1 or greater that has the NVPTX backend enabled, to support CUDA.
-* [dub](https://github.com/dlang/dub)
-and then just run `$dub build` or add `"dcompute": "~>0.1.0"` to your `dub.json` or `dependency "dcompute" version="~>0.1.0"` to your `dub.sdl`.
+* [dub](https://github.com/dlang/dub) then just run `$dub build.`
+Alternatively, you can include dcompute as a dependency, as shown below:
+  * add
+    ```json
+    "dcompute": {
+        "version": "~>0.1.1",
+        "dflags": [
+            "-mdcompute-targets=cuda-800",
+            "-mdcompute-targets=ocl-300",
+            "-oq"
+        ]
+    }
+    ```
+    to your `dub.json` under `dependencies`. The dflags will be passed to LDC to generate code for the specified targets. You can run `ldc2 --help` to look for that flag. Use `ocl-xy0` for OpenCL x.y and `cuda-xy0` for CUDA Compute Capability x.y. So the above flags are for OpenCL 3.0 and CUDA CC 8.0. The two flags must be included separately as shown in the `dub.json`.
+    * If you get an error saying `Need to use a DCompute enabled compiler`, you likely forgot the `-mdcompute-targets` flags.
+    * Check NVIDIA's [website](https://developer.nvidia.com/cuda-gpus) for your CUDA Compute Capability.
+  * Alternatively add the equivalent to dub.sdl, `dependency "dcompute" version="~>0.1.1"` to your `dub.sdl` and include the dflags.
+
 
 If you get an error like `Error: unrecognized switch '-mdcompute-targets=cuda-210`, make sure you are using LDC and not DMD: passing `--compiler=/path/to/ldc2` to dub will force it to use `/path/to/ldc2` as the D compiler.
 
