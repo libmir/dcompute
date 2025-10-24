@@ -21,7 +21,12 @@ These docs are designed to help getting started installing & using DCompute.
 4.1 index
 5. The compute API driver
 
-## D
+You can find the corresponding Readme for each of the listed items in the parent `docs` directory, labelled with names
+starting with 00 through 05. For the device standard library and compute API driver, look in the 
+subdirectories `04-std` and `05-driver`, respectively. These instructions will help you install and execute
+your first kernel with DCompute.
+
+## D Basics Refresher
 
 This guide assumes that the reader is familiar with the basics of D, although anyone 
 familiar with the C family of languages should be able to understand most of it.
