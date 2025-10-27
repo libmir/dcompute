@@ -2,7 +2,7 @@
 
 import ldc.dcompute;
 
-extern(C) void barrier();
+extern(C) void barrier(uint flags = 0)
 
 extern(C) void mem_fence(ulong);
 
