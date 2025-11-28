@@ -71,7 +71,6 @@ Using inlinehint doesn't inline at -O0 and inlines at -O1 and up. Perfect!
 /// Contrary to the OpenCL C spec this implementation of `mem_fence` is not deprecated by OpenCL C 2.0.
 /// Standards: [6.15.9. Legacy Explicit Memory Fence Functions](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_C.html#legacy-mem-fence-functions)
 @llvmAttr("inlinehint")
-pragma(mangle, "_Z9mem_fencej")
 void mem_fence(cl_mem_fence_flags flags)
 {
     atomic_work_item_fence(flags, memory_order.acq_rel, memory_scope.work_group);
@@ -80,7 +79,6 @@ void mem_fence(cl_mem_fence_flags flags)
 /// Contrary to the OpenCL C spec this implementation of `read_mem_fence` is not deprecated by OpenCL C 2.0.
 /// Standards: [6.15.9. Legacy Explicit Memory Fence Functions](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_C.html#legacy-mem-fence-functions)
 @llvmAttr("inlinehint")
-pragma(mangle, "_Z14read_mem_fencej")
 void read_mem_fence(cl_mem_fence_flags flags)
 {
     atomic_work_item_fence(flags, memory_order.acquire, memory_scope.work_group);
@@ -89,7 +87,6 @@ void read_mem_fence(cl_mem_fence_flags flags)
 /// Contrary to the OpenCL C spec this implementation of `write_mem_fence` is not deprecated by OpenCL C 2.0.
 /// Standards: [6.15.9. Legacy Explicit Memory Fence Functions](https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_C.html#legacy-mem-fence-functions)
 @llvmAttr("inlinehint")
-pragma(mangle, "_Z15write_mem_fencej")
 void write_mem_fence(cl_mem_fence_flags flags)
 {
     atomic_work_item_fence(flags, memory_order.release, memory_scope.work_group);
