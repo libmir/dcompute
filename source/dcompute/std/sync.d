@@ -9,7 +9,7 @@ import cuda = dcompute.std.cuda.sync;
 void barrier()
 {
     if(__dcompute_reflect(ReflectTarget.OpenCL))
-        ocl.barrier();
+        ocl.barrier(0);
     if(__dcompute_reflect(ReflectTarget.CUDA))
         cuda.barrier0();
 }
@@ -17,7 +17,7 @@ void barrier()
 void local_fence()
 {
     if(__dcompute_reflect(ReflectTarget.OpenCL))
-        ocl.mem_fence(0);
+        ocl.mem_fence(ocl.CLK_LOCAL_MEM_FENCE);
     if(__dcompute_reflect(ReflectTarget.CUDA))
         cuda.membar_cta();
 }
@@ -25,7 +25,7 @@ void local_fence()
 void global_fence()
 {
     if(__dcompute_reflect(ReflectTarget.OpenCL))
-        ocl.mem_fence(1);
+        ocl.mem_fence(ocl.CLK_GLOBAL_MEM_FENCE);
     if(__dcompute_reflect(ReflectTarget.CUDA))
         cuda.membar_gl();
 }
