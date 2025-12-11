@@ -73,7 +73,8 @@ Using inlinehint doesn't inline at -O0 and inlines at -O1 and up. Perfect!
 @llvmAttr("inlinehint")
 void mem_fence(cl_mem_fence_flags flags)
 {
-    atomic_work_item_fence(flags, memory_order.acq_rel, memory_scope.work_group);
+    if(__dcompute_reflect(ReflectTarget.OpenCL,0))
+        atomic_work_item_fence(flags, memory_order.acq_rel, memory_scope.work_group);
 }
 
 /// Contrary to the OpenCL C spec this implementation of `read_mem_fence` is not deprecated by OpenCL C 2.0.
@@ -81,7 +82,8 @@ void mem_fence(cl_mem_fence_flags flags)
 @llvmAttr("inlinehint")
 void read_mem_fence(cl_mem_fence_flags flags)
 {
-    atomic_work_item_fence(flags, memory_order.acquire, memory_scope.work_group);
+    if(__dcompute_reflect(ReflectTarget.OpenCL,0))
+        atomic_work_item_fence(flags, memory_order.acquire, memory_scope.work_group);
 }
 
 /// Contrary to the OpenCL C spec this implementation of `write_mem_fence` is not deprecated by OpenCL C 2.0.
@@ -89,5 +91,6 @@ void read_mem_fence(cl_mem_fence_flags flags)
 @llvmAttr("inlinehint")
 void write_mem_fence(cl_mem_fence_flags flags)
 {
-    atomic_work_item_fence(flags, memory_order.release, memory_scope.work_group);
+    if(__dcompute_reflect(ReflectTarget.OpenCL,0))
+        atomic_work_item_fence(flags, memory_order.release, memory_scope.work_group);
 }
