@@ -1,4 +1,6 @@
-version = DComputeTestCUDA;
+version (DComputeTesting) {
+    version = DComputeTestCUDA;
+}
 
 //import dcompute.tests.test;
 
@@ -21,7 +23,7 @@ else
     static assert(false, "Need to test something!");
 
 // Index of OpenCL 2.1 capable platform returned by Platform.getPlatforms
-enum CL_PLATFORM_INDEX = 2;
+enum CL_PLATFORM_INDEX = 3;
 
 int main(string[] args)
 {
@@ -52,7 +54,7 @@ int main(string[] args)
         writeln(plist);
         auto ctx      = Context(devices[0 ..1],null /*FIXME: plist[]*/);
 	// Change the file to the built OpenCL version.
-        Program.globalProgram = ctx.createProgram(cast(ubyte[])read("./.dub/obj/kernels_ocl200_64.spv"));
+        Program.globalProgram = ctx.createProgram(cast(ubyte[])read("./kernels_ocl210_64.spv"));
 
         try
         {
@@ -85,7 +87,7 @@ int main(string[] args)
         auto ctx   = Context(dev); scope(exit) ctx.detach();
 
         // Change the file to match your GPU.
-        Program.globalProgram = Program.fromFile("./.dub/obj/kernels_cuda210_64.ptx");
+        Program.globalProgram = Program.fromFile("./kernels_cuda210_64.ptx");
         auto q = Queue(false);
 
         Buffer!(float) b_res, b_x, b_y;
