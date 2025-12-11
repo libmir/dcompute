@@ -12,6 +12,8 @@ import std.meta;
 import std.exception : enforce;
 import std.experimental.allocator;
 import std.array;
+import std.typecons;
+import std.math.traits : isNaN;
 
 import dcompute.tests.dummykernels : saxpy;
 
@@ -23,7 +25,7 @@ else
     static assert(false, "Need to test something!");
 
 // Index of OpenCL 2.1 capable platform returned by Platform.getPlatforms
-enum CL_PLATFORM_INDEX = 3;
+enum CL_PLATFORM_INDEX = 2;
 
 int main(string[] args)
 {
@@ -43,17 +45,28 @@ int main(string[] args)
         auto platforms = Platform.getPlatforms(theAllocator);
         auto platform = platforms[CL_PLATFORM_INDEX];
         DerelictCL.reload(CLVersion.CL21);
+
         writeln("Platforms:");
-        writeln("\t", platforms.map!(p => p.name));
+        // writeln("\t", platforms.map!(p => p.name));
+        foreach (i, ref p; platforms)
+        {
+            writefln("\t[%d%1s] %s", i, (i == CL_PLATFORM_INDEX) ? "*" : "", p.name);
+        }
         writeln("\tChosen: ", platform.name);
+
         auto devices  = platform.getDevices(theAllocator);
         writeln("Devices:");
-        writeln("\t", devices.map!(d => d.name));
-        writeln("\tChosen: ", devices[0].name);
+        // writeln("\t", devices.map!(d => d.name));
+        foreach (i, ref d; devices)
+        {
+            writefln("\t[%d] %s", i, d.name);
+        }
+        // writeln("\tChosen: ", devices[0].name);
+
         auto plist    = propertyList!(Context.Properties)(Context.Properties.platform, platform.raw);
         writeln(plist);
         auto ctx      = Context(devices[0 ..1],null /*FIXME: plist[]*/);
-	// Change the file to the built OpenCL version.
+	    // Change the file to the built OpenCL version.
         Program.globalProgram = ctx.createProgram(cast(ubyte[])read("./kernels_ocl210_64.spv"));
 
         try
@@ -76,6 +89,12 @@ int main(string[] args)
 
         Event e = queue.enqueue!(saxpy)([N])(b_res,alpha,b_x,b_y, N);
         e.wait();
+
+        if (isNaN(res[0])) {
+            writeln("Read buffer from device");
+            Event[] ev = [] ~ e;
+            queue.read!(float)(b_res, res, Flag!"Blocking".yes, 0, ev);
+        }
     }
 
     version(DComputeTestCUDA)
