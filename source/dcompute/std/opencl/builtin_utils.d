@@ -36,6 +36,7 @@ Params:
 Returns: The return value of the called OpenCL function.
 
 Note:
+Calling this function from CUDA is undefined behavior.$(BR)
 This function doesn't check if the called OpenCL function is valid.
 Calling an OpenCL function with an invalid name or any invalid return
 types or arguments is undefined behavior.
@@ -44,10 +45,17 @@ types or arguments is undefined behavior.
 @llvmAttr("inlinehint")
 returnT callBuiltin(string funName, returnT, Args...)(Args args)
 {
-    mixin(MangleBuilder!(funName), "\n",
-          DefBuilder!(funName, returnT, Args));
-    // Can't use a semicolon or it won't compile for some reason.
-    return mixin(funName, "(", args.stringof, ")");
+    if(__dcompute_reflect(ReflectTarget.OpenCL))
+    {
+        mixin(MangleBuilder!(funName), "\n",
+              DefBuilder!(funName, returnT, Args));
+        // Can't use a semicolon or it won't compile for some reason.
+        return mixin(funName, "(", args.stringof, ")");
+    }
+    else
+    {
+        return returnT.init;
+    }
 }
 
 /**
@@ -91,7 +99,7 @@ private template DefBuilder(string funName, returnT, Args...)
 {
     // Need the `extern (C)` or else the llvm ir function will have a
     // `ptr nonnull null` as the first parameter for some reason.
-    alias A = AliasSeq!("extern (C) ", returnT.stringof, " ", funName, "(");
+    alias A = AliasSeq!("extern (C) nothrow @nogc ", returnT.stringof, " ", funName, "(");
     static foreach (i, Arg; Args)
     {
         A = AliasSeq!(A, Arg.stringof);
