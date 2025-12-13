@@ -95,8 +95,7 @@ int main(string[] args)
         // zero-copy failed
         if (isNaN(res[0])) {
             writeln("Read buffer from device");
-            Event[] ev = [] ~ e;
-            queue.read!(float)(b_res, res, Flag!"Blocking".yes, 0, ev);
+            queue.read!(float)(b_res, res);
         }
     }
 
