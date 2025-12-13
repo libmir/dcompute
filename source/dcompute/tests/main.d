@@ -47,7 +47,6 @@ int main(string[] args)
         DerelictCL.reload(CLVersion.CL21);
 
         writeln("Platforms:");
-        // writeln("\t", platforms.map!(p => p.name));
         foreach (i, ref p; platforms)
         {
             writefln("\t[%d%1s] %s", i, (i == CL_PLATFORM_INDEX) ? "*" : "", p.name);
@@ -56,18 +55,21 @@ int main(string[] args)
 
         auto devices  = platform.getDevices(theAllocator);
         writeln("Devices:");
-        // writeln("\t", devices.map!(d => d.name));
         foreach (i, ref d; devices)
         {
             writefln("\t[%d] %s", i, d.name);
         }
-        // writeln("\tChosen: ", devices[0].name);
+        writeln("\tChosen: ", devices[0].name);
 
         auto plist    = propertyList!(Context.Properties)(Context.Properties.platform, platform.raw);
         writeln(plist);
         auto ctx      = Context(devices[0 ..1],null /*FIXME: plist[]*/);
 	    // Change the file to the built OpenCL version.
-        Program.globalProgram = ctx.createProgram(cast(ubyte[])read("./kernels_ocl210_64.spv"));
+        version (Windows) {
+            Program.globalProgram = ctx.createProgram(cast(ubyte[]) read("./kernels_ocl200_64.spv"));
+        } else {
+            Program.globalProgram = ctx.createProgram(cast(ubyte[]) read("./.dub/obj/kernels_ocl200_64.spv"));
+        }
 
         try
         {
@@ -90,6 +92,7 @@ int main(string[] args)
         Event e = queue.enqueue!(saxpy)([N])(b_res,alpha,b_x,b_y, N);
         e.wait();
 
+        // zero-copy failed
         if (isNaN(res[0])) {
             writeln("Read buffer from device");
             Event[] ev = [] ~ e;
@@ -106,7 +109,11 @@ int main(string[] args)
         auto ctx   = Context(dev); scope(exit) ctx.detach();
 
         // Change the file to match your GPU.
-        Program.globalProgram = Program.fromFile("./kernels_cuda210_64.ptx");
+        version (Windows) {
+            Program.globalProgram = Program.fromFile("./kernels_cuda210_64.ptx");
+        } else {
+            Program.globalProgram = Program.fromFile("./.dub/obj/kernels_cuda210_64.ptx");
+        }
         auto q = Queue(false);
 
         Buffer!(float) b_res, b_x, b_y;

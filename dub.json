@@ -23,13 +23,13 @@
         },
         {
             "name": "test-cuda",
-            "dflags" : ["--mdcompute-targets=cuda-210" ,"-oq"],
+            "dflags" : ["--mdcompute-targets=cuda-210", "-oq"],
             "targetType": "executable",
             "versions": ["DComputeTestCUDA"],
         },
         {
             "name": "test-ocl",
-            "dflags" : ["--mdcompute-targets=ocl-210" ,"-oq"],
+            "dflags" : ["--mdcompute-targets=ocl-200", "-oq"],
             "targetType": "executable",
             "versions": ["DComputeTestOpenCL"],
         },
