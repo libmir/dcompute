@@ -56,7 +56,7 @@ struct Queue
         Event ret;
         status = cast(Status)clEnqueueWriteBuffer(this.raw, buffer.raw, cast(cl_bool)blocking, offset,
                                       data.memSize, cast(void*)data.ptr,
-                                      cast(uint)waitList.length, cast(cl_event*)waitList.ptr,
+                                      cast(cl_uint)waitList.length, cast(cl_event*)waitList.ptr,
                                       &ret.raw);
         checkErrors();
         return ret;
@@ -70,7 +70,7 @@ struct Queue
         Event ret;
         status = cast(Status)clEnqueueReadBuffer(this.raw, buffer.raw, cast(cl_bool)blocking, offset,
                                      data.memSize, cast(void*)data.ptr,
-                                     cast(uint)waitList.length, cast(cl_event*)waitList.ptr,
+                                     cast(cl_uint)waitList.length, cast(cl_event*)waitList.ptr,
                                      &ret.raw);
         checkErrors();
         return ret;
