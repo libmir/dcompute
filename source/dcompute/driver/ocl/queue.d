@@ -54,7 +54,7 @@ struct Queue
                    size_t offset = 0, const Event[] waitList = null)
     {
         Event ret;
-        status = clEnqueueWriteBuffer(this.raw, buffer.raw, cast(cl_bool)blocking, offset,
+        status = cast(Status)clEnqueueWriteBuffer(this.raw, buffer.raw, cast(cl_bool)blocking, offset,
                                       data.memSize, cast(void*)data.ptr,
                                       cast(uint)waitList.length, cast(cl_event*)waitList.ptr,
                                       &ret.raw);
