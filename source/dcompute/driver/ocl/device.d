@@ -6,7 +6,7 @@ import std.meta: AliasSeq;
 
 struct Device
 {
-    enum Type : int
+    enum Type : cl_bitfield
     {
         default_     = 0x1,
         CPU         = 0x2,
@@ -16,7 +16,7 @@ struct Device
         all         = 0xFFFFFFFF
     }
     
-    enum AffinityDomain
+    enum AffinityDomain : cl_bitfield
     {
         numa        = 0x1,
         l4_Cache    = 0x2,
@@ -26,7 +26,7 @@ struct Device
         nextPartitionable = 0x20
     }
     
-    enum PartitionProperty
+    enum PartitionProperty : long
     {
         Equally          = 0x1086,
         ByCounts         = 0x1087,
@@ -34,7 +34,7 @@ struct Device
         ByAffinityDomain = 0x1088,
     }
     
-    enum FPConfig
+    enum FPConfig : cl_bitfield
     {
         denorm                  = 1 << 0,
         infNan                  = 1 << 1,
@@ -46,20 +46,20 @@ struct Device
         correctlyRoundedDivSqrt = 1 << 7,
     }
     
-    enum MemoryCacheType
+    enum MemoryCacheType : cl_uint
     {
         none = 0,
         readOnly = 1,
         readWrite = 2,
     }
     
-    enum LocalMemoryType
+    enum LocalMemoryType : cl_uint
     {
         local,
         global,
     }
     
-    enum ExecutionCapabilities
+    enum ExecutionCapabilities : cl_bitfield
     {
         kernel,
         nativeKernel,
