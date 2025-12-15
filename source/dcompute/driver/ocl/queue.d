@@ -22,7 +22,7 @@ struct Queue
     cl_command_queue raw;
     // constructed from context
     
-    enum Properties
+    enum Properties : cl_bitfield
     {
         outOfOrderExecution = 1 << 0,
         profiling = 1 << 1
