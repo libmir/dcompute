@@ -13,7 +13,7 @@
         {
             "name": "library",
             "targetType": "library",
-            "excludedSourceFiles": ["./source/dcompute/tests/*"],
+            "excludedSourceFiles": ["source/dcompute/tests/*"],
         },
         {
             "name": "unittest",
