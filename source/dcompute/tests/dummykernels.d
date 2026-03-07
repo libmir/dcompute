@@ -5,7 +5,7 @@ pragma(LDC_no_moduleinfo);
 import ldc.dcompute;
 import dcompute.std.index;
 
-@kernel void saxpy(GlobalPointer!(float) res,
+@kernel() void saxpy(GlobalPointer!(float) res,
                    float alpha,GlobalPointer!(float) x,
                    GlobalPointer!(float) y, 
                    size_t N)
@@ -17,7 +17,7 @@ import dcompute.std.index;
 
 alias aagf = AutoIndexed!(GlobalPointer!(float));
 
-@kernel void auto_index_test(aagf a,
+@kernel() void auto_index_test(aagf a,
                              aagf b,
                              aagf c)
 {

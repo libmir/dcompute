@@ -10,8 +10,13 @@ void barrier()
 {
     if(__dcompute_reflect(ReflectTarget.OpenCL))
         ocl.barrier(0);
-    if(__dcompute_reflect(ReflectTarget.CUDA))
-        cuda.barrier0();
+    if(__dcompute_reflect(ReflectTarget.CUDA)) {
+        static if (__VENDOR__ == "LDC" && __VERSION__ >= 2112L) { // >= LDC 1.42.0
+            cuda.barrier_n(0);
+        } else {
+            cuda.barrier0();
+        }
+    }
 }
 
 void local_fence()
