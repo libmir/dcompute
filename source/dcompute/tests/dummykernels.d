@@ -3,7 +3,7 @@ module dcompute.tests.dummykernels;
 pragma(LDC_no_moduleinfo);
 
 import ldc.dcompute;
-import core.builtins;
+import ldc.intrinsics;
 import dcompute.std.index;
 
 mixin template _saxpy() {
@@ -29,7 +29,7 @@ mixin template _auto_index_test() {
     }
 }
 
-static if (__VENDOR__ == "LDC" && LLVM_atleast!21) { // >= LDC 1.42.0(LLVM 21)
+static if (LLVM_atleast!21) { // >= LDC 1.42.0(LLVM 21)
     pragma(msg, "using LDC version >= 1.42.0(LLVM 21)");
     @kernel() mixin _saxpy;
     @kernel() mixin _auto_index_test;
