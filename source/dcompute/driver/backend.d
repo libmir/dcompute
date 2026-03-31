@@ -4,4 +4,5 @@ enum Backend
 {
     OpenCL120,
     CUDA650,
+    Metal300,
 }
