@@ -39,13 +39,13 @@ Extending the previous example to add a constant to an array and assign it to an
 ```d
 @compute(CompileFor.deviceOnly) module mykernels;
 import ldc.attributes;
-import ldc.dcomputetypes;
+import ldc.dcompute;
 import dcompute.std.index;
 alias gf = GlobalPointer!float;
 @kernel void mykernel(gf a, gf b, float c)
 {
-auto i = GlobalIndex.x;
-a[i] = b[i] + c;
+    auto i = GlobalIndex.x;
+    a[i] = b[i] + c;
 }
 ```  
 
