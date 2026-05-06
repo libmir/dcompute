@@ -18,9 +18,11 @@ There are four main parts:
 
 ## Examples
 
+> **Note:** The `@kernel()` syntax requires LDC 1.42 or later. If you are using an older version of LDC, please use `@kernel` (without parentheses).
+
 Kernel:
 ```
-@kernel void saxpy(GlobalPointer!(float) res,
+@kernel() void saxpy(GlobalPointer!(float) res,
                    float alpha,
                    GlobalPointer!(float) x,
                    GlobalPointer!(float) y, 

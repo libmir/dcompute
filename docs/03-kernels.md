@@ -1,15 +1,17 @@
 Kernels
 =======
 
-At the heart of DCompute is are the special attributes `@compute` and `@kernel` from the module `ldc.dcompute`
+At the heart of DCompute is are the special attributes `@compute` and `@kernel()` from the module `ldc.dcompute`
+
+> **Note:** The `@kernel()` syntax requires LDC 1.42 or later. If you are using an older version of LDC, please use `@kernel` (without parentheses).
 
 `@compute` tell the d compiler that this module should be built to target the device. 
 `@compute` takes a single parameter that Indicate wether to target only the device 
 (`@compute(CompileFor.deviceOnly)`) or to target host as well (`@compute(CompileFor.hostAndDevice)`).
 
-`@kernel` specifies that the attached function should be an entry point for the device,
+`@kernel()` specifies that the attached function should be an entry point for the device,
 i.e. you can tell the driver to execute this function on the device, 
-whereas you can't for functions that aren't marked `@kernel`.
+whereas you can't for functions that aren't marked `@kernel()`.
 
 Address Spaces 
 --------------
@@ -49,12 +51,12 @@ The table below shows the equivalent terms in DCompute, OpenCL and CUDA.
 Hello World
 -----------
 
-About the simplest kernel you can have is shown below (note that @kernel functions MUST return `void` or you'll get errors)
+About the simplest kernel you can have is shown below (note that @kernel() functions MUST return `void` or you'll get errors)
 
 ```d
 @compute(CompileFor.deviceOnly) module mykernels;
 import ldc.dcompute;
-@kernel void mykernel(GlobalPointer!float a,GlobalPointer!float b, float c)
+@kernel() void mykernel(GlobalPointer!float a,GlobalPointer!float b, float c)
 {
 *a = *b + c;
 }
@@ -92,6 +94,6 @@ D:
 @compute(CompileFor.deviceOnly)
 module bar;
 
-extern(C) @kernel void foo();
+extern(C) @kernel() void foo();
 ```
 
