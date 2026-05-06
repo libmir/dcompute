@@ -42,7 +42,7 @@ import ldc.attributes;
 import ldc.dcompute;
 import dcompute.std.index;
 alias gf = GlobalPointer!float;
-@kernel void mykernel(gf a, gf b, float c)
+@kernel() void mykernel(gf a, gf b, float c)
 {
     auto i = GlobalIndex.x;
     a[i] = b[i] + c;
