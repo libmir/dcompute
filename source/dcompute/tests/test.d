@@ -5,7 +5,7 @@ import ldc.dcompute;
 import dcompute.std.index;
 import std.traits;
 
-@kernel
+@kernel()
 void map(alias F)(GlobalPointer!(ReturnType!(F)) r, Parameters!F args)
 {
     r[GlobalIndex.x] = F(args);
