@@ -13,8 +13,10 @@ import std.exception : enforce;
 import std.experimental.allocator;
 import std.array;
 import std.typecons;
+import std.conv : to;
 import std.math.traits : isNaN;
 
+import dcompute.driver.cuda.unified_buffer;
 import dcompute.tests.dummykernels : saxpy;
 
 version(DComputeTestOpenCL)
@@ -120,7 +122,7 @@ int main(string[] args)
         version (Windows) {
             Program.globalProgram = Program.fromFile("./kernels_cuda210_64.ptx");
         } else {
-            Program.globalProgram = Program.fromFile("./.dub/obj/kernels_cuda210_64.ptx");
+            Program.globalProgram = Program.fromFile("./kernels_cuda800_64.ptx");
         }
         auto q = Queue(false);
 
@@ -136,6 +138,36 @@ int main(string[] args)
                   ([N,1,1],[1,1,1])
                   (b_res,alpha,b_x,b_y, N);
         b_res.copy!(Copy.deviceToHost);
+
+        // --- Unified Memory test (runs only when the device supports it) ---
+        if (dev.supportsUnifiedMemory)
+        {
+            writeln("\nDevice supports Unified Memory — running UnifiedBuffer test...");
+
+            // Allocate managed memory and initialise from host slices.
+            // No explicit H2D copy is needed; the runtime migrates pages.
+            auto ub_x   = UnifiedBuffer!float(x[]);   scope(exit) ub_x.release();
+            auto ub_y   = UnifiedBuffer!float(y[]);   scope(exit) ub_y.release();
+            auto ub_res = UnifiedBuffer!float(N);     scope(exit) ub_res.release();
+
+            q.enqueue!(saxpy)
+                      ([N,1,1],[1,1,1])
+                      (ub_res, alpha, ub_x, ub_y, N);
+
+            // Synchronise so that host can safely read results.
+            // (No D2H copy — the host slice is the same allocation.)
+            Context.sync();
+
+            foreach (i; 0 .. N)
+                enforce(ub_res.hostSlice[i] == alpha * x[i] + y[i],
+                        "Unified Memory verification failed at index " ~ i.to!string ~ "!");
+
+            writeln("UnifiedBuffer test PASSED.");
+        }
+        else
+        {
+            writeln("\nDevice does not support Unified Memory — skipping UnifiedBuffer test.");
+        }
     }
 
     foreach(i; 0 .. N)
