@@ -25,6 +25,11 @@ struct Encoder {
         if (enc !is null) enc.setBuffer(buffer.raw, offset, index);
     }
 
+    void setThreadgroupMemoryLength(NSUInteger length, NSUInteger index) {
+        auto enc = raw();
+        if (enc !is null) enc.setThreadgroupMemoryLength(length, index);
+    }
+
     void dispatchThreads(MTLSize threadsPerGrid, MTLSize threadsPerThreadgroup) {
         auto enc = raw();
         if (enc !is null) enc.dispatchThreads(threadsPerGrid, threadsPerThreadgroup);

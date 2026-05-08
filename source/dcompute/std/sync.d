@@ -18,6 +18,9 @@ void barrier()
             cuda.barrier0();
         }
     }
+    // Metal: use `dcompute.std.metal.sync.wg_barrier(0, 1)` — importing this
+    // module’s `barrier()` from a `@compute` kernel currently triggers
+    // dcompute semantic analysis on OCL/CUDA helpers (see LDC issue / follow-up).
 }
 
 void local_fence()
