@@ -121,4 +121,29 @@ struct Device
             ` return result; `,
             ` } `);
     }
+
+  // Unified Memory capability helpers
+
+    /**
+     * Returns true when the device supports CUDA Managed Memory
+     * (cuMemAllocManaged / UnifiedBuffer).
+     * Requires Compute Capability >= 3.0.
+     * Wraps CU_DEVICE_ATTRIBUTE_MANAGED_MEMORY (attribute 83).
+     */
+    @property bool supportsUnifiedMemory()
+    {
+        return managedMemory != 0;
+    }
+
+    /**
+     * Returns true when the device participates in Unified Virtual
+     * Addressing (UVA) i.e. the same virtual address is valid on
+     * both host and device.  True on all 64-bit CUDA systems with
+     * CC >= 2.0.
+     * Wraps CU_DEVICE_ATTRIBUTE_UNIFIED_ADDRESSING (attribute 41).
+     */
+    @property bool supportsUnifiedAddressing()
+    {
+        return unifiedAddressing != 0;
+    }
 }
