@@ -59,7 +59,7 @@ struct UnifiedBuffer(T)
      *   elems = number of elements to allocate
      *   mode  = attachment scope (default: global_)
      */
-    this(size_t elems, AttachMode mode = AttachMode.global_)
+    @trusted this(size_t elems, AttachMode mode = AttachMode.global_)
     {
         status = cast(Status)cuMemAllocManaged(&raw, elems * T.sizeof,
                                               cast(uint)mode);
@@ -91,7 +91,7 @@ struct UnifiedBuffer(T)
      * Valid to read/write on the host at any time when no kernel is
      * concurrently accessing the same memory.
      */
-    @property T[] hostSlice()
+    @property @trusted T[] hostSlice()
     {
         return (cast(T*)raw)[0 .. _length];
     }
@@ -123,7 +123,7 @@ struct UnifiedBuffer(T)
 
     /// Free the managed allocation.  After this call `raw` and `length`
     /// are zeroed; accessing `hostSlice` is undefined behaviour.
-    void release()
+    @trusted void release()
     {
         status = cast(Status)cuMemFree(raw);
         checkErrors();
