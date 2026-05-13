@@ -5,7 +5,7 @@ import dcompute.driver.cuda;
 import std.string;
 struct Program
 {
-    void* raw;
+    CUmodule raw;
     
     Kernel!void getKernelByName(immutable(char)* name)
     {

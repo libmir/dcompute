@@ -4,6 +4,6 @@ import dcompute.driver.cuda;
 
 struct Event
 {
-    void* raw;
+    CUevent raw;
     
 }
