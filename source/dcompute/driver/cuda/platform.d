@@ -8,7 +8,12 @@ struct Platform
 {
     static void initialise(uint flags =0)
     {
-        DerelictCUDADriver.load();
+        auto support = loadCUDA();
+        if (support == CUDASupport.noLibrary || support == CUDASupport.badLibrary)
+        {
+            status = Status.sharedObjectInitFailed;
+            checkErrors();
+        }
         status = cast(Status)cuInit(flags);
         checkErrors();
     }
