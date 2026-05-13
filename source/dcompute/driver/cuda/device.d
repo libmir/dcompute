@@ -115,6 +115,7 @@ struct Device
             ` () { int result; `,
             ` status = cast(Status)cuDeviceGetAttribute( `,
             ` &result, `,
+            ` cast(CUdevice_attribute) `,
              __traits(getAttributes, __traits(getMember, Info, mem))[0].stringof,
             `, raw); `,
             ` checkErrors(); `,
