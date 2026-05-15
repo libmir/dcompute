@@ -101,19 +101,16 @@ struct UnifiedBuffer(T)
      * Initiates memory migration to the specified device prior to kernel execution
      * to avoid on-demand page migration latency.
      *
-     * Note: Explicit prefetching requires CUDA 8.0 or higher. On older drivers,
-     * this operation is not supported and will result in a Status.notSupported error.
+     * Note: Explicit prefetching requires CUDA 8.0 or higher. On older drivers
+     * where `cuMemPrefetchAsync` is not available, this is a silent no-op —
+     * unified memory still works correctly via demand paging.
      */
     @trusted void prefetch(Device dev, Queue q = Queue.init)
     {
         if (cuMemPrefetchAsync == null)
-        {
-            status = Status.notSupported;
-        }
-        else
-        {
-            status = cast(Status)cuMemPrefetchAsync(cast(CUdeviceptr)raw, _length * T.sizeof, dev.raw, q.raw);
-        }
+            return;
+
+        status = cast(Status)cuMemPrefetchAsync(cast(CUdeviceptr)raw, _length * T.sizeof, dev.raw, q.raw);
         checkErrors();
     }
 
