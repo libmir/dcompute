@@ -24,7 +24,7 @@ If you are not using dub DCompute has a few of dependencies that you need to
 include:
 
 * [derelict-cl](https://github.com/DerelictOrg/DerelictCL) for OpenCL bindings
-* [bindbc-cuda](https://github.com/BindBC/bindbc-cuda) for CUDA bindings
+* [bindbc-cuda](https://github.com/badnikhil/bindbc-cuda) for CUDA bindings
 * [derelict-util](https://github.com/DerelictOrg/DerelictUtil) shared library loading utilities used by derelict-cl
 
 Configuring bindbc-cuda
