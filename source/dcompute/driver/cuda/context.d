@@ -4,7 +4,7 @@ import dcompute.driver.cuda;
 
 struct Context
 {
-    void* raw;
+    CUcontext raw;
     this(Device dev, uint flags = 0)
     {
         status = cast(Status)cuCtxCreate(&raw, flags,dev.raw);
@@ -62,7 +62,7 @@ struct Context
     static @property size_t limit(Limit what)()
     {
         size_t ret;
-        status = cast(Status)cuCtxSetLimit(&ret,what);
+        status = cast(Status)cuCtxGetLimit(&ret,what);
         checkErrors();
         return ret;
     }

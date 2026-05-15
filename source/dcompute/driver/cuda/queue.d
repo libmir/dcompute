@@ -4,7 +4,7 @@ module dcompute.driver.cuda.queue;
 import dcompute.driver.cuda;
 struct Queue
 {
-    void* raw;
+    CUstream raw;
     this (bool async)
     {
         status = cast(Status)cuStreamCreate(&raw, async ? 1 : 0);

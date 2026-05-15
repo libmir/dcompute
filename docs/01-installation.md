@@ -24,8 +24,33 @@ If you are not using dub DCompute has a few of dependencies that you need to
 include:
 
 * [derelict-cl](https://github.com/DerelictOrg/DerelictCL) for OpenCL bindings
-* [derelict-cuda](https://github.com/DerelictOrg/DerelictCUDA) for CUDA bindings
-* [derelict-util](https://github.com/DerelictOrg/DerelictUtil) shared library loading utilities used by the above
+* [bindbc-cuda](https://github.com/badnikhil/bindbc-cuda) for CUDA bindings
+* [derelict-util](https://github.com/DerelictOrg/DerelictUtil) shared library loading utilities used by derelict-cl
+
+Configuring bindbc-cuda
+-----------------------
+
+Unlike the previous Derelict bindings, `bindbc-cuda` requires you to specify which
+CUDA Driver API version to target via a D version flag in your `dub.json`.
+This controls which host-side CUDA functions (e.g. `cuMemPrefetchAsync`) are available.
+
+Add the appropriate version to your `dub.json` configuration:
+
+```json
+"versions": ["CUDA_120"]
+```
+
+Supported version flags: `CUDA_100`, `CUDA_101`, `CUDA_102`, `CUDA_110`, `CUDA_111`,
+`CUDA_112`, `CUDA_118`, `CUDA_120`, `CUDA_122`, `CUDA_124`, `CUDA_130`, `CUDA_132`.
+
+If no version flag is specified, `bindbc-cuda` defaults to `CUDA_100` (CUDA 10.0).
+Choose the version that matches the CUDA toolkit installed on your system — you can
+check yours by running `nvcc --version`.
+
+**Note:** This version flag is independent of the LDC `-mdcompute-targets` flag.
+The `dflags` target (e.g. `cuda-210`) controls which GPU hardware architecture
+LDC generates PTX code for, while the `versions` flag controls which driver API
+functions are available on the host side.
 
 Drivers
 -------

@@ -17,7 +17,7 @@
 # Compiled Static libraries
 *.a
 *.lib
-
+__dummy_docs
 # Executables
 *.exe
 

@@ -6,17 +6,10 @@
  * migrates data automatically, so explicit copy!(Copy.hostToDevice) /
  * copy!(Copy.deviceToHost) calls are not needed.
  *
+ *
  * Requirements:
  *   - CUDA Compute Capability >= 3.0
  *   - Device.supportsUnifiedMemory == true
- *
- * Limitations (current):
- *   - prefetch() is a documented no-op stub because cuMemPrefetchAsync is not
- *     present in the derelict-cuda 3.1.1 binding (API version 6.5). If you
- *     need deterministic placement before a kernel launch, call
- *     Context.sync() after writing from the host and before the kernel; the
- *     driver will migrate pages on first access otherwise.
- *     (Tracked for discussion with mentors)
  */
 module dcompute.driver.cuda.unified_buffer;
 
@@ -100,24 +93,25 @@ struct UnifiedBuffer(T)
     @property size_t length() const { return _length; }
 
  
-    // Device-side hints (stubs pending driver-version upgrade)
+    // Device-side hints
 
     /**
      * Prefetch this buffer's data to a device asynchronously.
      *
-     * NOTE: This is currently a **no-op stub**. cuMemPrefetchAsync is not
-     * present in the derelict-cuda 3.1.1 binding (CUDA API 6.5). Without an
-     * explicit prefetch the CUDA runtime will migrate pages on first access,
-     * which is correct but may cause latency on the first kernel invocation.
+     * Initiates memory migration to the specified device prior to kernel execution
+     * to avoid on-demand page migration latency.
      *
-     * As a workaround, call Context.sync() on the host before launching the
-     * kernel to ensure all host writes have completed; the driver will then
-     * migrate on first GPU access.
+     * Note: Explicit prefetching requires CUDA 8.0 or higher. On older drivers
+     * where `cuMemPrefetchAsync` is not available, this is a silent no-op —
+     * unified memory still works correctly via demand paging.
      */
-    void prefetch(Device dev, Queue q = Queue.init)
+    @trusted void prefetch(Device dev, Queue q = Queue.init)
     {
-        // Stub — intentionally left empty.
-        // See module documentation for rationale.
+        if (cuMemPrefetchAsync == null)
+            return;
+
+        status = cast(Status)cuMemPrefetchAsync(cast(CUdeviceptr)raw, _length * T.sizeof, dev.raw, q.raw);
+        checkErrors();
     }
 
 

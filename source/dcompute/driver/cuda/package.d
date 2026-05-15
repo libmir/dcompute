@@ -1,7 +1,7 @@
 module dcompute.driver.cuda;
 
 public import ldc.dcompute;
-public import derelict.cuda.driverapi;
+public import bindbc.cuda;
 
 public import dcompute.driver.error;
 
