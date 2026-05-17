@@ -25,6 +25,11 @@ struct Encoder {
         if (enc !is null) enc.setBuffer(buffer.raw, offset, index);
     }
 
+    void setBytes(const(void)* bytes, NSUInteger length, NSUInteger index) {
+        auto enc = raw();
+        if (enc !is null) enc.setBytes(bytes, length, index);
+    }
+
     void setThreadgroupMemoryLength(NSUInteger length, NSUInteger index) {
         auto enc = raw();
         if (enc !is null) enc.setThreadgroupMemoryLength(length, index);

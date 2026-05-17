@@ -44,6 +44,9 @@ extern(Objective-C) interface MTLComputeCommandEncoder : NSObject {
     @selector("setBuffer:offset:atIndex:")
     void setBuffer(MTLBuffer buffer, NSUInteger offset, NSUInteger index);
 
+    @selector("setBytes:length:atIndex:")
+    void setBytes(const(void)* bytes, NSUInteger length, NSUInteger index);
+
     @selector("setThreadgroupMemoryLength:atIndex:")
     void setThreadgroupMemoryLength(NSUInteger length, NSUInteger index);
 

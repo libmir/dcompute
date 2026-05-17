@@ -6,8 +6,21 @@ import dcompute.driver.metal.program;
 import dcompute.driver.metal.bindings;
 import dcompute.driver.metal.buffer;
 import std.meta : allSatisfy;
+import std.traits : isNumeric, Unqual;
 
-private enum isBuffer(T) = is(T == Buffer!U, U);
+private enum isBuffer(T) = is(Unqual!T == Buffer!U, U);
+private enum isThreadgroupMemory(T) = is(Unqual!T == ThreadgroupMemory);
+private enum isScalarKernelArgument(T) = isNumeric!(Unqual!T);
+private enum isKernelArgument(T) =
+    isBuffer!T || isThreadgroupMemory!T || isScalarKernelArgument!T;
+
+struct ThreadgroupMemory {
+    NSUInteger length;
+}
+
+ThreadgroupMemory threadgroupMemory(NSUInteger length) {
+    return ThreadgroupMemory(length);
+}
 
 struct CommandBuffer {
     private void* raw_;
@@ -73,8 +86,8 @@ struct Queue {
         raw_ = null;
     }
 
-    void enqueue(Buffers...)(Pipeline pipeline, MTLSize grid, MTLSize group, Buffers buffers)
-        if (allSatisfy!(isBuffer, Buffers)) {
+    void enqueue(Args...)(Pipeline pipeline, MTLSize grid, MTLSize group, Args args)
+        if (allSatisfy!(isKernelArgument, Args)) {
         auto cmdBuffer = commandBuffer();
         if (cmdBuffer.raw is null) return;
         auto encoder = cmdBuffer.computeEncoder();
@@ -86,8 +99,8 @@ struct Queue {
         scope(exit) encoder.release();
 
         encoder.setPipeline(pipeline);
-        foreach (i, ref buf; buffers) {
-            encoder.setBuffer(buf, 0, cast(NSUInteger) i);
+        foreach (i, ref arg; args) {
+            encodeKernelArgument(encoder, arg, cast(NSUInteger) i);
         }
         encoder.dispatchThreads(grid, group);
         encoder.endEncoding();
@@ -110,12 +123,27 @@ struct Queue {
                 this.group = group;
             }
 
-            void opCall(Buffers...)(Buffers buffers)
-                if (allSatisfy!(isBuffer, Buffers)) {
-                q.enqueue(k.pipeline, grid, group, buffers);
+            void opCall(Args...)(Args args)
+                if (allSatisfy!(isKernelArgument, Args)) {
+                q.enqueue(k.pipeline, grid, group, args);
             }
         }
 
         return Launch(this, kernel, grid, group);
     }
+}
+
+private void encodeKernelArgument(T)(ref Encoder encoder, ref T buffer, NSUInteger index)
+    if (isBuffer!T) {
+    encoder.setBuffer(buffer, 0, index);
+}
+
+private void encodeKernelArgument(T)(ref Encoder encoder, ref T memory, NSUInteger index)
+    if (isThreadgroupMemory!T) {
+    encoder.setThreadgroupMemoryLength(memory.length, index);
+}
+
+private void encodeKernelArgument(T)(ref Encoder encoder, ref T value, NSUInteger index)
+    if (isScalarKernelArgument!T) {
+    encoder.setBytes(&value, T.sizeof, index);
 }
