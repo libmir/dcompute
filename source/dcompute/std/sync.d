@@ -3,21 +3,24 @@
 import ldc.dcompute;
 import ldc.intrinsics;
 
-import ocl  = dcompute.std.opencl.sync;
-import cuda = dcompute.std.cuda.sync;
+import ocl   = dcompute.std.opencl.sync;
+import cuda  = dcompute.std.cuda.sync;
+import metal = dcompute.std.metal.sync;
 
 //suspends work-item execution until all work-items in the work-group have called the barrier
-void barrier()
+void barrier()()
 {
     if(__dcompute_reflect(ReflectTarget.OpenCL))
         ocl.barrier(0);
-    if(__dcompute_reflect(ReflectTarget.CUDA)) {
+    else if(__dcompute_reflect(ReflectTarget.CUDA)) {
         static if (LLVM_atleast!21) { // >= LDC 1.42.0(LLVM 21)
             cuda.barrier_n(0);
         } else {
             cuda.barrier0();
         }
     }
+    else if(__dcompute_reflect(ReflectTarget.Metal))
+        metal.threadgroup_barrier(metal.mem_none);
 }
 
 void local_fence()
