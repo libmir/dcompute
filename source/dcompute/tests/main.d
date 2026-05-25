@@ -112,20 +112,6 @@ int main(string[] args)
 
     version(DComputeTestCUDA)
     {
-        Platform.initialise();
-	
-        auto devs = Platform.getDevices(theAllocator);
-        auto dev   = devs[0]; 
-        auto ctx   = Context(dev); scope(exit) ctx.detach();
-
-        // Change the file to match your GPU.
-        version (Windows) {
-            Program.globalProgram = Program.fromFile("./kernels_cuda210_64.ptx");
-        } else {
-            Program.globalProgram = Program.fromFile("./kernels_cuda800_64.ptx");
-        }
-        auto q = Queue(false);
-
         Buffer!(float) b_res, b_x, b_y;
         b_res =  Buffer!(float)(res[]); scope(exit) b_res.release();
         b_x   =  Buffer!(float)(x[]);   scope(exit) b_x.release();
@@ -133,14 +119,12 @@ int main(string[] args)
 
         b_x.copy!(Copy.hostToDevice);
         b_y.copy!(Copy.hostToDevice);
-
-        q.enqueue!(saxpy)
-                  ([N,1,1],[1,1,1])
-                  (b_res,alpha,b_x,b_y, N);
+ 
+        launch!saxpy([N,1,1],[1,1,1], b_res, alpha, b_x, b_y, N);
         b_res.copy!(Copy.deviceToHost);
 
-        // --- Unified Memory test (runs only when the device supports it) ---
-        if (dev.supportsUnifiedMemory)
+        //  Unified Memory test (runs only when the device supports it) 
+        if (defaultDevice().supportsUnifiedMemory)
         {
             writeln("\nDevice supports Unified Memory — running UnifiedBuffer test...");
 
@@ -150,9 +134,7 @@ int main(string[] args)
             auto ub_y   = UnifiedBuffer!float(y[]);   scope(exit) ub_y.release();
             auto ub_res = UnifiedBuffer!float(N);     scope(exit) ub_res.release();
 
-            q.enqueue!(saxpy)
-                      ([N,1,1],[1,1,1])
-                      (ub_res, alpha, ub_x, ub_y, N);
+            launch!saxpy([N,1,1],[1,1,1], ub_res, alpha, ub_x, ub_y, N);
 
             // Synchronise so that host can safely read results.
             // (No D2H copy — the host slice is the same allocation.)
