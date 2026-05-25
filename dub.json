@@ -17,15 +17,17 @@
         },
         {
             "name": "unittest",
-            "dflags" : ["-mdcompute-targets=cuda-210" ,"-oq"],
+            "dflags": ["-mdcompute-targets=cuda-800", "-oq"],
             "targetType": "executable",
-            "versions": ["DComputeTesting"],
+            "stringImportPaths": ["."],
+            "versions": ["DComputeTesting", "DComputeCUDA_800"],
         },
         {
             "name": "test-cuda",
             "dflags" : ["--mdcompute-targets=cuda-210", "-oq"],
             "targetType": "executable",
-            "versions": ["DComputeTestCUDA"],
+            "stringImportPaths": ["."],
+            "versions": ["DComputeTestCUDA", "DComputeCUDA_210"],
         },
         {
             "name": "test-ocl",
@@ -33,5 +35,5 @@
             "targetType": "executable",
             "versions": ["DComputeTestOpenCL"],
         },
-   ]
+    ]
 }
