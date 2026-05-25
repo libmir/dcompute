@@ -38,7 +38,25 @@ struct Program
         checkErrors();
         return ret;
     }
-    
+
+    /**
+     * Load a program from a compile-time embedded PTX string.
+     *
+     * The PTX is embedded at compile time via the D compiler's string import
+     * mechanism (-J / stringImportPaths in dub.json).  No file I/O occurs at
+     * runtime.
+     *
+     * Example:
+     *   Program p = Program.fromEmbedded!(import("kernel.ptx"))();
+     */
+    static Program fromEmbedded(string ptx)()
+    {
+        Program ret;
+        status = cast(Status)cuModuleLoadData(&ret.raw, ptx.ptr);
+        checkErrors();
+        return ret;
+    }
+
     __gshared static Program globalProgram;
     //cuModuleLoadDataEx
     //cuModuleLoadFatBinary
