@@ -11,6 +11,7 @@ struct Buffer(T)
 
     this(size_t elems)
     {
+        ensureInit();
         status = cast(Status)cuMemAlloc(&raw,elems * T.sizeof);
         checkErrors();
         hostMemory = null;
@@ -18,6 +19,7 @@ struct Buffer(T)
 
     this(T[] arr)
     {
+        ensureInit();
         status = cast(Status)cuMemAlloc(&raw,arr.length * T.sizeof);
         checkErrors();
         hostMemory = arr;
