@@ -40,18 +40,19 @@ struct Program
     }
 
     /**
-     * Load a program from a compile-time embedded PTX string.
+     * Load a program from a compile-time embedded PTX file.
      *
-     * The PTX is embedded at compile time via the D compiler's string import
-     * mechanism (-J / stringImportPaths in dub.json).  No file I/O occurs at
-     * runtime.
+     * The PTX file is read and embedded at compile time via the D compiler's
+     * string import mechanism (-J / stringImportPaths in dub.json).  No file
+     * I/O occurs at runtime.
      *
      * Example:
-     *   Program p = Program.fromEmbedded!(import("kernel.ptx"))();
+     *   Program p = Program.fromEmbedded!"kernel.ptx"();
      */
-    static Program fromEmbedded(string ptx)()
+    static Program fromEmbedded(string filename)()
     {
         Program ret;
+        enum ptx = import(filename);
         status = cast(Status)cuModuleLoadData(&ret.raw, ptx.ptr);
         checkErrors();
         return ret;

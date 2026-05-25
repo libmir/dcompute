@@ -82,7 +82,7 @@ auto launch(alias k)(uint[3] grid, uint[3] block,
             "Example: \"versions\": [\"DComputeCUDA_800\"]");
 
         Program.globalProgram =
-            Program.fromEmbedded!(import("kernels_" ~ _arch ~ "_64.ptx"))();
+            Program.fromEmbedded!("kernels_" ~ _arch ~ "_64.ptx")();
     }
     defaultQueue().enqueue!k(grid, block)(args);
 }
