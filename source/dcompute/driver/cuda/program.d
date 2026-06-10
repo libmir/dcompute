@@ -58,6 +58,29 @@ struct Program
         return ret;
     }
 
+    /**
+     * Load a program from a compile-time embedded PTX file for the active architecture.
+     */
+    static Program fromEmbedded()()
+    {
+        // SM level to PTX filename fragment, resolved inside client compilation
+        version      (DComputeCUDA_1200) enum _arch = "cuda1200";
+        else version (DComputeCUDA_900)  enum _arch = "cuda900";
+        else version (DComputeCUDA_800)  enum _arch = "cuda800";
+        else version (DComputeCUDA_750)  enum _arch = "cuda750";
+        else version (DComputeCUDA_700)  enum _arch = "cuda700";
+        else version (DComputeCUDA_600)  enum _arch = "cuda600";
+        else version (DComputeCUDA_500)  enum _arch = "cuda500";
+        else version (DComputeCUDA_300)  enum _arch = "cuda300";
+        else version (DComputeCUDA_210)  enum _arch = "cuda210";
+        else static assert(false,
+            "Add a DComputeCUDA_XXX version to your dub config " ~
+            "matching your --mdcompute-targets=cuda-XXX dflag. " ~
+            "Example: \"versions\": [\"DComputeCUDA_800\"]");
+
+        return fromEmbedded!("kernels_" ~ _arch ~ "_64.ptx")();
+    }
+
     __gshared static Program globalProgram;
     //cuModuleLoadDataEx
     //cuModuleLoadFatBinary
