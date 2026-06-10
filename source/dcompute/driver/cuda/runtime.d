@@ -132,3 +132,27 @@ private void _initThread()
     _threadQueue = Queue(false); // non-async stream, bound to this thread
     _threadReady = true;
 }
+
+/**
+ * Launch kernel `k` on the calling thread's default Queue using the globally
+ * loaded Program.  Platform, Device, Context, Queue and Program are all
+ * initialised lazily on the first call — the user needs no boilerplate.
+ *
+ * Example:
+ *   launch!saxpy([N,1,1], [1,1,1], b_res, alpha, b_x, b_y, N);
+ *
+ * Params:
+ *   grid      = Grid  dimensions [x, y, z].
+ *   block     = Block dimensions [x, y, z].
+ *   args      = Kernel arguments (host types, Buffer/UnifiedBuffer ).
+ */
+auto launch(alias k)(uint[3] grid, uint[3] block,
+                     HostArgsOf!(typeof(k)) args)
+{
+    if (Program.globalProgram.raw is null)
+    {
+        ensureInit();
+        Program.globalProgram = Program.fromEmbedded!()();
+    }
+    defaultQueue().enqueue!k(grid, block)(args);
+}
