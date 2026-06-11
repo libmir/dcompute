@@ -4,6 +4,7 @@ import ldc.dcompute;
 
 private import ocl  = dcompute.std.opencl.index;
 private import cuda = dcompute.std.cuda.index;
+private import metal = dcompute.std.metal.index;
 
 /*
  Index Terminology
@@ -80,6 +81,8 @@ struct GlobalIndex
             return ocl.get_global_id(0);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_x()*cuda.ntid_x() + cuda.tid_x();
+        else if(__dcompute_reflect(ReflectTarget.Metal,0))
+            return metal.thread_position_in_grid_x(0);
         else
             assert(0);
     }
@@ -90,6 +93,8 @@ struct GlobalIndex
             return ocl.get_global_id(1);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_y()*cuda.ntid_y() + cuda.tid_y();
+        else if(__dcompute_reflect(ReflectTarget.Metal,0))
+            return metal.thread_position_in_grid_y(1);
         else
             assert(0);
     }
@@ -100,6 +105,8 @@ struct GlobalIndex
             return ocl.get_global_id(2);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_z()*cuda.ntid_z() + cuda.tid_z();
+        else if(__dcompute_reflect(ReflectTarget.Metal,0))
+            return metal.thread_position_in_grid_z(2);
         else
             assert(0);
     }
