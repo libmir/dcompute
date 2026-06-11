@@ -1,3 +1,5 @@
+module dcompute.tests.main;
+
 version (DComputeTesting) {
     version = DComputeTestCUDA;
 }
@@ -112,43 +114,75 @@ int main(string[] args)
 
     version(DComputeTestCUDA)
     {
-        Buffer!(float) b_res, b_x, b_y;
-        b_res =  Buffer!(float)(res[]); scope(exit) b_res.release();
-        b_x   =  Buffer!(float)(x[]);   scope(exit) b_x.release();
-        b_y   =  Buffer!(float)(y[]);   scope(exit) b_y.release();
-
-        b_x.copy!(Copy.hostToDevice);
-        b_y.copy!(Copy.hostToDevice);
- 
-        launch!saxpy([N,1,1],[1,1,1], b_res, alpha, b_x, b_y, N);
-        b_res.copy!(Copy.deviceToHost);
-
-        //  Unified Memory test (runs only when the device supports it) 
-        if (defaultDevice().supportsUnifiedMemory)
+        // 1. Manual test
         {
-            writeln("\nDevice supports Unified Memory — running UnifiedBuffer test...");
+            Platform.initialise();
+            auto devs = Platform.getDevices(theAllocator);
+            auto dev   = devs[0]; 
+            auto ctx   = Context(dev); scope(exit) ctx.detach();
 
-            // Allocate managed memory and initialise from host slices.
-            // No explicit H2D copy is needed; the runtime migrates pages.
-            auto ub_x   = UnifiedBuffer!float(x[]);   scope(exit) ub_x.release();
-            auto ub_y   = UnifiedBuffer!float(y[]);   scope(exit) ub_y.release();
-            auto ub_res = UnifiedBuffer!float(N);     scope(exit) ub_res.release();
+            Program.globalProgram = Program.fromModule!("dcompute.tests.dummykernels")();
+            auto q = Queue(false);
 
-            launch!saxpy([N,1,1],[1,1,1], ub_res, alpha, ub_x, ub_y, N);
+            Buffer!(float) b_res, b_x, b_y;
+            b_res =  Buffer!(float)(res[]); scope(exit) b_res.release();
+            b_x   =  Buffer!(float)(x[]);   scope(exit) b_x.release();
+            b_y   =  Buffer!(float)(y[]);   scope(exit) b_y.release();
 
-            // Synchronise so that host can safely read results.
-            // (No D2H copy — the host slice is the same allocation.)
-            Context.sync();
+            b_x.copy!(Copy.hostToDevice);
+            b_y.copy!(Copy.hostToDevice);
 
-            foreach (i; 0 .. N)
-                enforce(ub_res.hostSlice[i] == alpha * x[i] + y[i],
-                        "Unified Memory verification failed at index " ~ i.to!string ~ "!");
-
-            writeln("UnifiedBuffer test PASSED.");
+            q.enqueue!(saxpy)
+                      ([N,1,1],[1,1,1])
+                      (b_res,alpha,b_x,b_y, N);
+            b_res.copy!(Copy.deviceToHost);
+            
+            // Validate 
+            foreach(i; 0 .. N) enforce(res[i] == alpha * x[i] + y[i]);
+            res[] = 0.0f; // reset
+            Program.globalProgram.raw = null; // reset global state so lazy init triggers
         }
-        else
+
+        // 2. New test
         {
-            writeln("\nDevice does not support Unified Memory — skipping UnifiedBuffer test.");
+            Buffer!(float) b_res, b_x, b_y;
+            b_res =  Buffer!(float)(res[]); scope(exit) b_res.release();
+            b_x   =  Buffer!(float)(x[]);   scope(exit) b_x.release();
+            b_y   =  Buffer!(float)(y[]);   scope(exit) b_y.release();
+
+            b_x.copy!(Copy.hostToDevice);
+            b_y.copy!(Copy.hostToDevice);
+    
+            launch!saxpy([N,1,1],[1,1,1], b_res, alpha, b_x, b_y, N);
+            b_res.copy!(Copy.deviceToHost);
+
+            //  Unified Memory test (runs only when the device supports it) 
+            if (defaultDevice().supportsUnifiedMemory)
+            {
+                writeln("\nDevice supports Unified Memory — running UnifiedBuffer test...");
+
+                // Allocate managed memory and initialise from host slices.
+                // No explicit H2D copy is needed; the runtime migrates pages.
+                auto ub_x   = UnifiedBuffer!float(x[]);   scope(exit) ub_x.release();
+                auto ub_y   = UnifiedBuffer!float(y[]);   scope(exit) ub_y.release();
+                auto ub_res = UnifiedBuffer!float(N);     scope(exit) ub_res.release();
+
+                launch!saxpy([N,1,1],[1,1,1], ub_res, alpha, ub_x, ub_y, N);
+
+                // Synchronise so that host can safely read results.
+                // (No D2H copy — the host slice is the same allocation.)
+                Context.sync();
+
+                foreach (i; 0 .. N)
+                    enforce(ub_res.hostSlice[i] == alpha * x[i] + y[i],
+                            "Unified Memory verification failed at index " ~ i.to!string ~ "!");
+
+                writeln("UnifiedBuffer test PASSED.");
+            }
+            else
+            {
+                writeln("\nDevice does not support Unified Memory — skipping UnifiedBuffer test.");
+            }
         }
     }
 

@@ -151,8 +151,9 @@ auto launch(alias k)(uint[3] grid, uint[3] block,
 {
     if (Program.globalProgram.raw is null)
     {
+        import std.traits : moduleName;
         ensureInit();
-        Program.globalProgram = Program.fromEmbedded!()();
+        Program.globalProgram = Program.fromModule!(moduleName!(__traits(parent, k)))();
     }
     defaultQueue().enqueue!k(grid, block)(args);
 }
