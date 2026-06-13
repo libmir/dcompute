@@ -18,7 +18,7 @@ struct Queue
     this (Device _device /*bool async*/)
     {
         device = _device;
-        commandQueue = device.raw.newCommandQueue();
+        commandQueue = device.mtlDevice.newCommandQueue();
     }
 
     auto enqueue(alias k)(uint[3] _grid, uint[3] _block)

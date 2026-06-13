@@ -31,7 +31,7 @@ struct Program
 
         NSError error;
 
-        auto pipelineState = device.raw.newComputePipelineStateWithFunction(
+        auto pipelineState = device.mtlDevice.newComputePipelineStateWithFunction(
             kernelFunction,
             MTLPipelineOption.None,
             null,
@@ -57,21 +57,12 @@ struct Program
         NSError error;
         auto nsPath = NSString.create(absolutePath(path));
 
-        auto library = device.raw.newLibrary(NSURL.fromPath(nsPath), error);
+        auto library = device.mtlDevice.newLibrary(NSURL.fromPath(nsPath), error);
 
         if (library is null)
         {
             printf("Error loading .metallib: %s\n", error.localizedDescription().ptr);
             assert(0);
-        }
-
-        foreach(function_; library.functionNames)
-        {
-            auto functionName = cast(NSString) function_;
-
-            auto r = functionName.ptr();
-
-            printf("kernel: %s\n", r);
         }
 
         return Program(library, device);

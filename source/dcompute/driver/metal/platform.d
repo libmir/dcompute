@@ -5,11 +5,18 @@ import metal.device;
 
 struct Platform
 {
-    static void initialize()
+    static Device[] getDevices()
     {
+        auto mtlDevices = MTLCopyAllDevices();
+        auto devices = new Device[mtlDevices.length];
 
+        for(int i=0;i < mtlDevices.length;i ++)
+        {
+            devices[i] = Device(mtlDevices[i]);
+        }
+
+        return devices;
     }
-
     // static Device[] getDevices()
     // {
     //     auto hardwareDevice = MTLCreateSystemDefaultDevice();
