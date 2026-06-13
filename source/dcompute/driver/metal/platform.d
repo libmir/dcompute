@@ -17,17 +17,7 @@ struct Platform
 
         return devices;
     }
-    // static Device[] getDevices()
-    // {
-    //     auto hardwareDevice = MTLCreateSystemDefaultDevice();
-        
-    //     if (hardwareDevice is null) {
-    //         return [];
-    //     }
-        
-    //     return [ Device(hardwareDevice) ];
-    // }
-
+    
     static Device getDefaultDevice()
     {
         auto device = Device(MTLCreateSystemDefaultDevice());
