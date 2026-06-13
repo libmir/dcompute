@@ -14,6 +14,7 @@ struct Queue
     MTLCommandQueue commandQueue;
     MTLCommandBuffer lastActiveBuffer;
     
+    // TODO(asadbek): explore options to make the use of async execution with events
     this (Device _device /*bool async*/)
     {
         device = _device;
@@ -24,10 +25,10 @@ struct Queue
     {
         static struct Call
         {
-            Queue q;
+            Queue* q;
             uint[3] grid, block;
 
-            this(Queue _q, uint[3] _grid, uint[3] _block)
+            this(Queue* _q, uint[3] _grid, uint[3] _block)
             {
                 q = _q;
                 grid = _grid;
@@ -49,10 +50,9 @@ struct Queue
                     static if (is(typeof(arg): Buffer!U, U))
                     {
                         computeEncoder.setBuffer(arg.mtlBuffer, 0, i);
-                    }
-                    else static if (__traits(isPOD, typeof(arg)) && !is(typeof(arg) == class))
+                    } else static if (__traits(isScalar, typeof(arg)))
                     {
-                        computeEncoder.setBytes(&val, typeof(val).sizeof, i);
+                        computeEncoder.setBytes(&arg, typeof(arg).sizeof, i);
                     }
                     else 
                     {
@@ -60,35 +60,28 @@ struct Queue
                     }
                 }
 
-                // specify the grid size
                 auto threadgroupsPerGrid = MTLSize(grid[0], grid[1], grid[2]);
                 
-                // thread group size
                 auto threadsPerThreadgroup = MTLSize(block[0], block[1], block[2]);
 
-                // dispatchThreads using compute encoder
                 computeEncoder.dispatchThreads(threadgroupsPerGrid, threadsPerThreadgroup);
                 
-                // commit the commandBuffer
                 computeEncoder.endEncoding();
                 commandBuffer.commit();
-                commandBuffer.waitUntilCompleted();
 
-                // q.lastActiveBuffer = commandBuffer;
+                q.lastActiveBuffer = commandBuffer;
             }
         }
 
-        return Call(this, _grid, _block);
+        return Call(&this, _grid, _block);
     }
 
     void finish() {
-        import std.stdio;
-        printf("waiting until completed......\n");
-        if (lastActiveBuffer !is null) {
+        if (lastActiveBuffer !is null) { 
             lastActiveBuffer.waitUntilCompleted();
-            lastActiveBuffer = null;
+            lastActiveBuffer.release();
 
-            printf("kernel call completed......\n");
+            lastActiveBuffer = null;
         }
     }
 }
