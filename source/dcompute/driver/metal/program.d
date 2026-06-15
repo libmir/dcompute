@@ -29,22 +29,7 @@ struct Program
             assert(0);
         }
 
-        NSError error;
-
-        auto pipelineState = device.mtlDevice.newComputePipelineStateWithFunction(
-            kernelFunction,
-            MTLPipelineOption.None,
-            null,
-            error
-        );
-
-        if (pipelineState is null)
-        {
-            printf("Error: Backend compilation failed: %s\n", error.localizedDescription().ptr);
-            assert(0);
-        }
-
-        return Kernel!void(pipelineState);
+        return Kernel!void(kernelFunction);
     }
 
     Kernel!(typeof(k)) getKernel(alias k)()

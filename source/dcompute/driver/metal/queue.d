@@ -7,6 +7,9 @@ import dcompute.driver.metal.program;
 import metal;
 import metal.argument;
 import metal.types;
+import core.stdc.stdio;
+import objc;
+import foundation;
 
 struct Queue
 {
@@ -37,13 +40,28 @@ struct Queue
 
             void opCall(HostArgsOf!(typeof(k)) args)
             {
+                NSError error;
+
                 auto kernel = Program.globalProgram.getKernel!k();
                 
+                auto pipelineState = q.device.mtlDevice.newComputePipelineStateWithFunction(
+                    kernel.kernelFunction,
+                    MTLPipelineOption.None,
+                    null,
+                    error
+                );
+
+                if (pipelineState is null)
+                {
+                    printf("Error: Backend compilation failed: %s\n", error.localizedDescription().ptr);
+                    assert(0);
+                }
+
                 auto commandBuffer = q.commandQueue.commandBuffer();
 
                 auto computeEncoder = commandBuffer.computeCommandEncoder();
 
-                computeEncoder.setComputePipelineState(kernel.pipelineState);
+                computeEncoder.setComputePipelineState(pipelineState);
 
                 foreach (i, arg; args)
                 {

@@ -1,12 +1,12 @@
 module dcompute.driver.metal.kernel;
-import metal.computepipeline;
+import metal.library;
 
 struct Kernel(F) if (is(F==function) || is(F==void))
 {
-    MTLComputePipelineState pipelineState;
+    MTLFunction kernelFunction;
 
-    this(MTLComputePipelineState ps)
+    this(MTLFunction _kernelFunction)
     {
-        pipelineState = ps;
+        kernelFunction = _kernelFunction;
     }
 }

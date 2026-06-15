@@ -20,11 +20,6 @@ struct Buffer(T)
         mtlBuffer = device.newBuffer(sizeInBytes);
 
         hostMemory = array;
-
-        if (array.ptr !is null && sizeInBytes > 0)
-        {
-            memcpy(mtlBuffer.contents(), array.ptr, sizeInBytes);
-        }
     }
 
     T* contents()
