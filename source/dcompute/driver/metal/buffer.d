@@ -11,14 +11,9 @@ struct Buffer(T)
     // Host memory associated with this buffer
     T[] hostMemory;
 
-    this(T[] array)
+    this(MTLBuffer _mtlBuffer, T[] array)
     {
-        auto device = Program.globalProgram.device;
-
-        size_t sizeInBytes = array.length * T.sizeof;
-
-        mtlBuffer = device.newBuffer(sizeInBytes);
-
+        mtlBuffer = _mtlBuffer;
         hostMemory = array;
     }
 

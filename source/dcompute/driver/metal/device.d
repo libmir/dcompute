@@ -28,13 +28,18 @@ struct Device
         return mtlDevice.newBuffer(sizeInBytes, MTLResourceOptions.StorageModeShared);
     }
 
-    void copy(T)(Buffer!T buffer)
+    Buffer!T makeBuffer(T)(T[] hostMemory)
     {
-        size_t sizeInBytes = buffer.hostMemory.length * T.sizeof;
+        size_t sizeInBytes = hostMemory.length * T.sizeof;
+
+        auto mtlBuffer = newBuffer(sizeInBytes);
+        auto buffer = Buffer!T(mtlBuffer, hostMemory);
 
         if (buffer.hostMemory.ptr !is null && sizeInBytes > 0)
         {
             memcpy(buffer.mtlBuffer.contents(), buffer.hostMemory.ptr, sizeInBytes);
         }
+
+        return buffer;
     }
 }
