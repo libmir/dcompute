@@ -47,6 +47,8 @@ struct GlobalDimension
             return ocl.get_global_size(0);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_x()*cuda.nctaid_x();
+        else if (__dcompute_reflect(ReflectTarget.Metal,0))
+            return metal.threads_per_grid(0);
         else
             assert(0);
     }
@@ -57,6 +59,8 @@ struct GlobalDimension
             return ocl.get_global_size(1);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_y()*cuda.nctaid_y();
+        else if (__dcompute_reflect(ReflectTarget.Metal,0))
+            return metal.threads_per_grid(1);
         else
             assert(0);
     }
@@ -67,6 +71,8 @@ struct GlobalDimension
             return ocl.get_global_size(2);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_z()*cuda.nctaid_z();
+        else if (__dcompute_reflect(ReflectTarget.Metal,0))
+            return metal.threads_per_grid(2);
         else
             assert(0);
     }
@@ -82,7 +88,7 @@ struct GlobalIndex
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_x()*cuda.ntid_x() + cuda.tid_x();
         else if(__dcompute_reflect(ReflectTarget.Metal,0))
-            return metal.thread_position_in_grid_x(0);
+            return metal.thread_position_in_grid(0);
         else
             assert(0);
     }
@@ -94,7 +100,7 @@ struct GlobalIndex
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_y()*cuda.ntid_y() + cuda.tid_y();
         else if(__dcompute_reflect(ReflectTarget.Metal,0))
-            return metal.thread_position_in_grid_y(1);
+            return metal.thread_position_in_grid(1);
         else
             assert(0);
     }
@@ -106,7 +112,7 @@ struct GlobalIndex
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_z()*cuda.ntid_z() + cuda.tid_z();
         else if(__dcompute_reflect(ReflectTarget.Metal,0))
-            return metal.thread_position_in_grid_z(2);
+            return metal.thread_position_in_grid(2);
         else
             assert(0);
     }
@@ -146,6 +152,8 @@ struct GroupDimension
             return ocl.get_num_groups(0);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.nctaid_x();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threadgroups_per_grid(0);
         else
             assert(0);
     }
@@ -156,6 +164,8 @@ struct GroupDimension
             return ocl.get_num_groups(1);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.nctaid_y();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threadgroups_per_grid(1);
         else
             assert(0);
     }
@@ -166,6 +176,8 @@ struct GroupDimension
             return ocl.get_num_groups(2);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.nctaid_z();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threadgroups_per_grid(2);
         else
             assert(0);
     }
@@ -180,6 +192,8 @@ struct GroupIndex
             return ocl.get_group_id(0);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_x();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threadgroup_position_in_grid(0);
         else
             assert(0);
     }
@@ -190,6 +204,8 @@ struct GroupIndex
             return ocl.get_group_id(1);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_y();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threadgroup_position_in_grid(1);
         else
             assert(0);
     }
@@ -200,6 +216,8 @@ struct GroupIndex
             return ocl.get_group_id(2);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ctaid_z();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threadgroup_position_in_grid(2);
         else
             assert(0);
     }
@@ -214,6 +232,8 @@ struct SharedDimension
             return ocl.get_local_size(0);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_x();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threads_per_threadgroup(0);
         else
             assert(0);
     }
@@ -224,6 +244,8 @@ struct SharedDimension
             return ocl.get_local_size(1);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_y();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threads_per_threadgroup(1);
         else
             assert(0);
 
@@ -235,6 +257,8 @@ struct SharedDimension
             return ocl.get_local_size(2);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.ntid_z();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.threads_per_threadgroup(2);
         else
             assert(0);
     }
@@ -249,6 +273,8 @@ struct SharedIndex
             return ocl.get_local_id(0);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.tid_x();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.thread_position_in_threadgroup(0);
         else
             assert(0);
     }
@@ -259,6 +285,8 @@ struct SharedIndex
             return ocl.get_local_id(1);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.tid_y();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.thread_position_in_threadgroup(1);
         else
             assert(0);
     }
@@ -269,6 +297,8 @@ struct SharedIndex
             return ocl.get_local_id(2);
         else if(__dcompute_reflect(ReflectTarget.CUDA,0))
             return cuda.tid_z();
+        else if(__dcompute_reflect(ReflectTarget.Metal, 0))
+            return metal.thread_position_in_threadgroup(2);
         else
             assert(0);
     }

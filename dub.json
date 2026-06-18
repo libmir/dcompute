@@ -36,5 +36,11 @@
             "targetType": "executable",
             "versions": ["DComputeTestOpenCL"],
         },
-    ]
+        {
+            "name" : "test-metal",
+            "dflags": ["-mdcompute-targets=metal-400", "-version=LDC_DCompute","-oq"],
+            "targetType": "executable",
+            "versions": ["DComputeTestMetal"],
+        },
+   ]
 }

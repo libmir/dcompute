@@ -26,6 +26,8 @@ else version(DComputeTestCUDA) {
     import dcompute.driver.cuda.unified_buffer;
     import dcompute.driver.cuda;
 }
+else version(DComputeTestMetal)
+    import dcompute.driver.metal;
 else
     static assert(false, "Need to test something!");
 
@@ -198,6 +200,46 @@ int main(string[] args)
                     "__VERSION__ — skipping the CUDA embedded-PTX tests.");
             return 0;
         }
+    }
+
+    version(DComputeTestMetal)
+    {
+        auto devices = Platform.getDevices();
+
+        auto device = devices[0];
+        
+        if (device.raw is null)
+        {
+            "Failed to fetch default device".writeln;
+            return 1;
+        }
+
+        auto program = Program.fromFile(device, "./kernels_metal400_64.metallib");
+
+        Program.globalProgram = program;
+
+        if (program.metalLibrary is null)
+        {
+            "Failed to load .metallibrary".writeln;
+            return 2;
+        }
+
+        auto deviceX = device.makeBuffer!float(x);
+        auto deviceY = device.makeBuffer!float(y);
+        auto deviceRes = device.makeBuffer!float(res);
+
+        auto queue = Queue(device);
+
+        queue.enqueue!(saxpy)
+                ([N,1,1],[256,1,1])
+                (deviceRes, alpha, deviceX, deviceY, N);
+
+        queue.finish();
+
+        // Copy data from device buffer to host
+        auto contents = deviceRes.contents();
+
+        res = contents[0 .. res.length];
     }
 
     foreach(i; 0 .. N)
