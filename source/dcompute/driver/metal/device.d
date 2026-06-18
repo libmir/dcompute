@@ -17,7 +17,6 @@ struct Device
         return cast(MTLDevice) raw;
     }
 
-
     this(MTLDevice device)
     {
         raw = cast(void*)device;
