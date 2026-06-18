@@ -231,7 +231,7 @@ int main(string[] args)
         auto queue = Queue(device);
 
         queue.enqueue!(saxpy)
-                ([N,1,1],[256,1,1])
+                ([N,1,1],[1,1,1])
                 (deviceRes, alpha, deviceX, deviceY, N);
 
         queue.finish();
