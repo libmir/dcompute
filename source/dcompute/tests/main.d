@@ -114,6 +114,11 @@ int main(string[] args)
 
     version(DComputeTestCUDA)
     {
+        // The injected-PTX feature (Program.fromModule / launch!) needs an LDC that
+        // embeds device PTX into the binary: D frontend __VERSION__ >= 2113 (LDC >= 1.43).
+        // On older compilers these tests are skipped rather than failing to build.
+        static if (__VERSION__ >= 2113)
+        {
         // 1. Manual test
         {
             Platform.initialise();
@@ -183,6 +188,14 @@ int main(string[] args)
             {
                 writeln("\nDevice does not support Unified Memory — skipping UnifiedBuffer test.");
             }
+        }
+        }
+        else
+        {
+            writeln("DCompute injected-PTX tests (fromModule / launch!) require LDC >= 1.43 " ~
+                    "(D frontend __VERSION__ >= 2113); this compiler reports an older " ~
+                    "__VERSION__ — skipping the CUDA embedded-PTX tests.");
+            return 0;
         }
     }
 
