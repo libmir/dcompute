@@ -15,6 +15,7 @@ public import dcompute.driver.cuda.platform;
 public import dcompute.driver.cuda.program;
 public import dcompute.driver.cuda.queue;
 public import dcompute.driver.cuda.unified_buffer;
+public import dcompute.driver.cuda.runtime;
 
 enum Copy
 {
@@ -42,3 +43,4 @@ private template ReplaceTemplate(alias needle, alias replacement) {
         }
     }
 }
+
