@@ -18,13 +18,14 @@ import std.typecons;
 import std.conv : to;
 import std.math.traits : isNaN;
 
-import dcompute.driver.cuda.unified_buffer;
 import dcompute.tests.dummykernels : saxpy;
 
 version(DComputeTestOpenCL)
     import dcompute.driver.ocl;
-else version(DComputeTestCUDA)
+else version(DComputeTestCUDA) {
+    import dcompute.driver.cuda.unified_buffer;
     import dcompute.driver.cuda;
+}
 else
     static assert(false, "Need to test something!");
 
