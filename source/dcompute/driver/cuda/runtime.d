@@ -38,7 +38,9 @@ private static bool  _threadReady = false; // safety-net flag
 // in module-dependency order.  No locking needed here.
 shared static this()
 {
-    _initPlatform();
+    version(LDC_DCompute_CUDA) {
+        _initPlatform();
+    }
 }
 
 // Per-thread init: thread-local static constructor
@@ -46,7 +48,9 @@ shared static this()
 // that thread begins.  For the main thread it runs after shared static this().
 static this()
 {
-    _initThread();
+    version(LDC_DCompute_CUDA) {
+      _initThread();
+  }
 }
 
 // Public API
