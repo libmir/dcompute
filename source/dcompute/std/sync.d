@@ -7,7 +7,7 @@ import ocl  = dcompute.std.opencl.sync;
 import cuda = dcompute.std.cuda.sync;
 
 //suspends work-item execution until all work-items in the work-group have called the barrier
-void barrier()
+void barrier()()
 {
     if(__dcompute_reflect(ReflectTarget.OpenCL))
         ocl.barrier(0);
