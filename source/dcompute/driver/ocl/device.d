@@ -55,14 +55,14 @@ struct Device
     
     enum LocalMemoryType : cl_uint
     {
-        local,
-        global,
+        local  = 0x1, // CL_LOCAL
+        global = 0x2, // CL_GLOBAL
     }
     
     enum ExecutionCapabilities : cl_bitfield
     {
-        kernel,
-        nativeKernel,
+        kernel       = 1 << 0, // CL_EXEC_KERNEL
+        nativeKernel = 1 << 1, // CL_EXEC_NATIVE_KERNEL
     }
     
     static struct Info
