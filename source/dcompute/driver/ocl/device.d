@@ -81,7 +81,7 @@ struct Device
         @(0x100A) uint preferredVectorWidthFloat;
         @(0x100B) uint preferredVectorWidthDouble;
         @(0x100C) uint maxClockFrequency;
-        @(0x1000) uint addressBits;
+        @(0x100D) uint addressBits;
         @(0x100E) uint maxReadImageArgs;
         @(0x100F) uint maxWriteImageArgs;
         @(0x1010) ulong maxMemoryAllocSize;
