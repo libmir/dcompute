@@ -149,6 +149,9 @@ struct UnifiedBuffer(T)
         Buffer!T b;
         b.raw        = raw;
         b.hostMemory = hostSlice;
+        // Intentionally leave b._rc null: this is a non-owning view. The
+        // transient Buffer must NOT cuMemFree the UnifiedBuffer's allocation
+        // when it dies — UnifiedBuffer.release() owns that lifetime.
         return b;
     }
 

@@ -6,7 +6,29 @@ import std.string;
 struct Program
 {
     CUmodule raw;
-    
+
+    // Shared atomic refcount for an OWNED CUmodule (see rcCreate/rcRetain/
+    // rcRelease in dcompute.driver.cuda). null = non-owning. The
+    // fromFile/fromString/fromModule factories DO create a module and set
+    // _rc, so the returned Program owns it. Copies share the counter.
+    private shared(int)* _rc;
+
+    this(this)
+    {
+        rcRetain(_rc);
+    }
+
+    // Last owner unloads the module. The CUresult is deliberately ignored (a
+    // destructor must not throw) — this matters for globalProgram-style
+    // usage, where the dtor may run at shutdown after the CUDA context is
+    // torn down; a cuModuleUnload error there is harmless.
+    ~this()
+    {
+        if (rcRelease(_rc) && raw !is null)
+            cuModuleUnload(raw);
+        raw = null;
+    }
+
     Kernel!void getKernelByName(immutable(char)* name)
     {
         Kernel!void ret;
@@ -28,6 +50,8 @@ struct Program
         Program ret;
         status = cast(Status)cuModuleLoad(&ret.raw,name.toStringz);
         checkErrors();
+        if (ret.raw !is null)
+            ret._rc = rcCreate(); // freshly loaded module: take ownership
         return ret;
     }
 
@@ -36,6 +60,8 @@ struct Program
         Program ret;
         status = cast(Status)cuModuleLoadData(&ret.raw,name.toStringz);
         checkErrors();
+        if (ret.raw !is null)
+            ret._rc = rcCreate(); // freshly loaded module: take ownership
         return ret;
     }
 
@@ -76,6 +102,8 @@ struct Program
         Program ret;
         mixin("status = cast(Status)cuModuleLoadData(&ret.raw, &" ~ symbolName ~ ");");
         checkErrors();
+        if (ret.raw !is null)
+            ret._rc = rcCreate(); // freshly loaded module: take ownership
         return ret;
     }
     else
@@ -94,10 +122,27 @@ struct Program
     //cuModuleLoadDataEx
     //cuModuleLoadFatBinary
     
+    // Drops this copy's ownership; only the LAST owner actually unloads the
+    // module, so surviving copies never see an unloaded handle and nothing is
+    // unloaded twice. Handle and ownership are cleared either way, making a
+    // later ~this a guaranteed no-op.
     void unload()
     {
-        status = cast(Status)cuModuleUnload(raw);
-        checkErrors();
+        if (_rc !is null)
+        {
+            if (rcRelease(_rc) && raw !is null)
+            {
+                status = cast(Status)cuModuleUnload(raw);
+                checkErrors();
+            }
+        }
+        else if (raw !is null)
+        {
+            // Non-owning view: legacy behaviour, unload immediately.
+            status = cast(Status)cuModuleUnload(raw);
+            checkErrors();
+        }
+        raw = null;
     }
     
     //TODO: linkstate

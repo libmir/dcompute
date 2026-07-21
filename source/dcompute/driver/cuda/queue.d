@@ -5,17 +5,43 @@ import dcompute.driver.cuda;
 struct Queue
 {
     CUstream raw;
+
+    // Shared atomic refcount for the owned CUstream (see rcCreate/rcRetain/
+    // rcRelease in dcompute.driver.cuda). null = non-owning view (e.g.
+    // Queue.init). Copies (enqueue copies a Queue by value into Call) share
+    // the counter so the stream is destroyed exactly once.
+    private shared(int)* _rc;
+
     this (bool async)
     {
         status = cast(Status)cuStreamCreate(&raw, async ? 1 : 0);
         checkErrors();
+        if (raw !is null)
+            _rc = rcCreate();
     }
     this (bool async, int priority)
     {
         status = cast(Status)cuStreamCreateWithPriority(&raw, async ? 1 : 0, priority);
         checkErrors();
+        if (raw !is null)
+            _rc = rcCreate();
     }
-    
+
+    this(this)
+    {
+        rcRetain(_rc);
+    }
+
+    // Last owner destroys the stream. The CUresult is deliberately ignored:
+    // a destructor must not throw (it may run as a GC finalizer or during
+    // shutdown after the driver is already torn down).
+    ~this()
+    {
+        if (rcRelease(_rc) && raw !is null)
+            cuStreamDestroy(raw);
+        raw = null;
+    }
+
     @property bool async()
     {
         uint ret;
