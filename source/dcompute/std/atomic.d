@@ -3,20 +3,25 @@
 import ldc.dcompute;
 
 import cuda = dcompute.std.cuda.atomic;
+import metal = dcompute.std.metal.atomic;
 public import dcompute.std.atomic_common : MemoryOrder;
 
 int atomicAddShared(MemoryOrder mo = MemoryOrder.seq_cst)(SharedPointer!int dst, int val)
 {
-	if(__dcompute_reflect(ReflectTarget.CUDA))
-		return cuda.atomicAddShared!mo(dst, val);
-	assert(0);
+    if(__dcompute_reflect(ReflectTarget.CUDA))
+        return cuda.atomicAddShared!mo(dst, val);
+    if(__dcompute_reflect(ReflectTarget.OpenCL))
+        assert(0);
+    return metal.atomicAddShared!mo(dst, val);
 }
 
 int atomicAdd(MemoryOrder mo = MemoryOrder.seq_cst)(GlobalPointer!int dst, int val)
 {
-	if(__dcompute_reflect(ReflectTarget.CUDA))
-		return cuda.atomicAdd!mo(dst, val);
-	assert(0);
+    if(__dcompute_reflect(ReflectTarget.CUDA))
+        return cuda.atomicAdd!mo(dst, val);
+    if(__dcompute_reflect(ReflectTarget.OpenCL))
+        assert(0);
+    return metal.atomicAdd!mo(dst, val);
 }
 /*
  * @brief Atomically exchanges the value at the address with a new value.
@@ -28,17 +33,20 @@ int atomicExchange(MemoryOrder mo = MemoryOrder.seq_cst)
                   (GlobalPointer!int dst, int newVal)
 {
     if (__dcompute_reflect(ReflectTarget.CUDA))
-		return cuda.atomicExchange!mo(dst, newVal);
-	assert(0);
+        return cuda.atomicExchange!mo(dst, newVal);
+    if(__dcompute_reflect(ReflectTarget.OpenCL))
+        assert(0);
+    return metal.atomicExchange!mo(dst, newVal);
 }
 
 int atomicExchangeShared(MemoryOrder mo = MemoryOrder.seq_cst)(SharedPointer!int dst, int newVal)
 {
-	if(__dcompute_reflect(ReflectTarget.CUDA))
-		return cuda.atomicExchangeShared!mo(dst, newVal);
-	assert(0);
+    if(__dcompute_reflect(ReflectTarget.CUDA))
+        return cuda.atomicExchangeShared!mo(dst, newVal);
+    if(__dcompute_reflect(ReflectTarget.OpenCL))
+        assert(0);
+    return metal.atomicExchangeShared!mo(dst, newVal);
 }
-
 /*
  *Atomic:
  * T add (GenericPointer!T addr,T val)
