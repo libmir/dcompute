@@ -7,6 +7,7 @@
     "dependencies": {
         "derelict-cl"  : "~>3.2.0",
         "bindbc-cuda": "~>0.1.0",
+        "metal-d": "~>0.5.3",
         "taggedalgebraic": "~>0.10.7"
     },
     "configurations": [
@@ -35,5 +36,12 @@
             "targetType": "executable",
             "versions": ["DComputeTestOpenCL"],
         },
-    ]
+        {
+            "name" : "test-metal",
+            "dflags": ["-mdcompute-targets=metal-400", "-version=LDC_DCompute","-oq"],
+            "dflags-ldc": ["-wi"],
+            "targetType": "executable",
+            "versions": ["DComputeTestMetal"],
+        },
+   ]
 }
