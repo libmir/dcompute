@@ -7,7 +7,12 @@
     "dependencies": {
         "derelict-cl"  : "~>3.2.0",
         "bindbc-cuda": "~>0.1.0",
-        "taggedalgebraic": "~>0.10.7"
+        "metal-d": "~>0.5.3",
+        "taggedalgebraic": "~>0.10.7",
+        "llvm_downgrader" : {
+          "repository" : "git+https://github.com/asindarov/llvm_downgrader.git",
+          "version" : "99d231c2e5fe5be2a768d573c1bca28b7a53ffab"
+        }
     },
     "configurations": [
         {
@@ -35,5 +40,12 @@
             "targetType": "executable",
             "versions": ["DComputeTestOpenCL"],
         },
-    ]
+        {
+            "name" : "test-metal",
+            "dflags": ["-mdcompute-targets=metal-400", "-version=LDC_DCompute","-oq"],
+            "dflags-ldc": ["-wi"],
+            "targetType": "executable",
+            "versions": ["DComputeTestMetal"],
+        },
+   ]
 }
