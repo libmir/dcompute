@@ -15,7 +15,12 @@ struct RC(T, alias release)
     {
         payload = val;
         count = cast(int*) malloc(int.sizeof);
-        if (count !is null) *count = 1;
+        if (count is null)
+        {
+            import core.exception : onOutOfMemoryError;
+            onOutOfMemoryError();
+        }
+        *count = 1;
     }
 
     this(Args...)(auto ref Args args)
