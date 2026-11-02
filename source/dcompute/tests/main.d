@@ -50,6 +50,19 @@ version(unittest)
 
 int main(string[] args)
 {
+    version (DComputeTestCUDA)
+    {
+        // Soft-fail init test (see dcompute.tests.runtime_init).  Opt-in via
+        // env var because it must run with the CUDA devices masked, e.g.:
+        //     DCOMPUTE_TEST_NO_CUDA=1 CUDA_VISIBLE_DEVICES="" ./dcompute
+        import std.process : environment;
+        if (environment.get("DCOMPUTE_TEST_NO_CUDA") !is null)
+        {
+            import dcompute.tests.runtime_init : runNoCudaInitTest;
+            return runNoCudaInitTest();
+        }
+    }
+
     enum size_t N = 128;
     float alpha = 5.0;
     float[N] res, x,y;

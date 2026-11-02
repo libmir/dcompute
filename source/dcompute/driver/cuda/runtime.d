@@ -16,6 +16,12 @@
  * ensureInit() is kept as a defensive fallback.  It is a no-op once the
  * module constructors have run, so calling it is always safe and costs only
  * a single bool check on the fast path.
+ *
+ * On machines without a CUDA driver or device the module constructors fail
+ * softly: they mark CUDA as unavailable and return quietly, so merely linking
+ * against this module never aborts a program before main().  The first actual
+ * attempt to use the runtime (via ensureInit()) then throws a clear,
+ * catchable DComputeDriverException.
  */
 module dcompute.driver.cuda.runtime;
 
@@ -26,7 +32,8 @@ import std.experimental.allocator.mallocator : Mallocator;
 // __gshared: lives in a single memory location, accessible from all threads.
 private __gshared Device  _defaultDevice;
 private __gshared Context _defaultContext;
-private __gshared bool    _platformReady = false; // safety-net flag
+private __gshared bool    _platformReady  = false; // safety-net flag
+private __gshared bool    _cudaAvailable  = true;  // cleared if init fails
 
 // Thread-local state
 // plain `static`: D gives each thread its own copy automatically.
@@ -38,9 +45,7 @@ private static bool  _threadReady = false; // safety-net flag
 // in module-dependency order.  No locking needed here.
 shared static this()
 {
-    version(LDC_DCompute_CUDA) {
-        _initPlatform();
-    }
+    _initPlatform();
 }
 
 // Per-thread init: thread-local static constructor
@@ -48,9 +53,7 @@ shared static this()
 // that thread begins.  For the main thread it runs after shared static this().
 static this()
 {
-    version(LDC_DCompute_CUDA) {
-      _initThread();
-  }
+    _initThread();
 }
 
 // Public API
@@ -69,6 +72,9 @@ static this()
 void ensureInit()
 {
     if (!_platformReady) _initPlatform(); // global guard (synchronized inside)
+    if (!_cudaAvailable)
+        throw new DComputeDriverException(
+            "No CUDA driver or device available on this system.");
     if (!_threadReady)   _initThread();   // per-thread guard (no lock, TLS)
 }
 
@@ -100,32 +106,57 @@ private void _initPlatform()
     {
         if (_platformReady) return;
 
-        Platform.initialise();
-        // Device 0 is the default.  Users needing a specific device can call
-        // Platform.getDevices() and manage their own Context + Queue.
-        
-        // TODO : Make multi-device usage better and easy.
-        _defaultDevice = Platform.getDevices(Mallocator.instance)[0];
+        // This runs on the module-constructor path, where an uncaught
+        // exception aborts the program before main() starts.  On machines
+        // without a CUDA driver or device, mark CUDA unavailable and return
+        // quietly — ensureInit() reports the problem with a catchable
+        // exception if the runtime is actually used.
+        if (!Platform.tryInitialise())
+        {
+            _cudaAvailable = false;
+            return;
+        }
 
-        // cuCtxCreate creates the context AND pushes it onto the calling
-        // thread's CUDA context stack.
-        _defaultContext = Context(_defaultDevice);
+        try
+        {
+            // Device 0 is the default.  Users needing a specific device can call
+            // Platform.getDevices() and manage their own Context + Queue.
 
-        // Compile-time PTX embedding
-        // LDC compiles @compute modules to PTX first, then compiles host code,
-        // so import() resolves in a single build pass with no file I/O at
-        // runtime.
-        // The version ladder is pure data — one line per SM level.  Adding a
-        // new target only requires one new `else version` line here plus the
-        // matching "DComputeCUDA_XXX" entry in dub.json.
+            // TODO : Make multi-device usage better and easy.
+            _defaultDevice = Platform.getDevices(Mallocator.instance)[0];
 
-        _platformReady = true;
+            // cuCtxCreate creates the context AND pushes it onto the calling
+            // thread's CUDA context stack.
+            _defaultContext = Context(_defaultDevice);
+
+            // Compile-time PTX embedding
+            // LDC compiles @compute modules to PTX first, then compiles host code,
+            // so import() resolves in a single build pass with no file I/O at
+            // runtime.
+            // The version ladder is pure data — one line per SM level.  Adding a
+            // new target only requires one new `else version` line here plus the
+            // matching "DComputeCUDA_XXX" entry in dub.json.
+
+            _platformReady = true;
+        }
+        catch (Exception)
+        {
+            // Backstop: never let an exception escape into the module-ctor
+            // path.  Reset the thread-local driver status so a later
+            // checkErrors() does not spuriously re-throw it.
+            status = Status.Success;
+            _cudaAvailable = false;
+        }
     }
 }
 
 private void _initThread()
 {
     if (_threadReady) return;
+
+    // Nothing to bind this thread to when platform init failed (no CUDA
+    // driver/device) or has not run yet.
+    if (!_platformReady) return;
 
     // The thread that ran _initPlatform() already has _defaultContext on its
     // CUDA context stack (cuCtxCreate pushes automatically).
