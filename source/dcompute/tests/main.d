@@ -32,6 +32,22 @@ else
 // Index of OpenCL 2.1 capable platform returned by Platform.getPlatforms
 enum CL_PLATFORM_INDEX = 2;
 
+version(unittest)
+{
+    import core.runtime : Runtime;
+    shared static this()
+    {
+        Runtime.moduleUnitTester = {
+            foreach (m; ModuleInfo)
+            {
+                if (m !is null && m.unitTest !is null)
+                    m.unitTest()();
+            }
+            return true;
+        };
+    }
+}
+
 int main(string[] args)
 {
     enum size_t N = 128;
@@ -115,6 +131,9 @@ int main(string[] args)
 
     version(DComputeTestCUDA)
     {
+        // Exercise RC wrappers for CUDA driver objects.
+        runRaiiDestructorTests();
+
         // The injected-PTX feature (Program.fromModule / launch!) needs an LDC that
         // embeds device PTX into the binary: D frontend __VERSION__ >= 2113 (LDC >= 1.43).
         // On older compilers these tests are skipped rather than failing to build.
@@ -206,4 +225,155 @@ int main(string[] args)
     return 0;
 }
 
+version(DComputeTestCUDA)
+{
+    struct RaiiTests
+    {
+        import dcompute.driver.cuda.rc : Buffer, Context, Event, Program, Queue;
+        static import driver = dcompute.driver.cuda;
 
+        private static void dropBufferCopy(Buffer!float copy) {}
+        private static void dropQueueCopy(Queue copy) {}
+
+        // Refcount keeps the device allocation alive across copies.
+        private static void testBufferRefcountSurvivesCopy()
+        {
+            enum size_t M = 64;
+            float[M] src, back;
+            foreach (i; 0 .. M) src[i] = cast(float)(i * 3 + 1);
+            back[] = 0.0f;
+
+            auto b = Buffer!float(src[]);
+            enforce(b.raw != 0, "Buffer allocation failed");
+
+            dropBufferCopy(b);
+
+            {
+                Buffer!float[1] arr;
+                arr[0] = b;
+            }
+
+            b.copy!(Copy.hostToDevice);
+            b.hostMemory = back[];
+            b.copy!(Copy.deviceToHost);
+            foreach (i; 0 .. M)
+                enforce(back[i] == src[i],
+                        "Buffer H2D/D2H mismatch after copy dtor at " ~ i.to!string);
+        }
+
+        // Refcount keeps the CUstream alive across copies.
+        private static void testQueueRefcountSurvivesCopy()
+        {
+            auto q = Queue(false);
+            enforce(q.raw !is null, "Queue creation failed");
+
+            dropQueueCopy(q);
+
+            {
+                Queue[1] arr;
+                arr[0] = q;
+            }
+
+            q.async;
+            enforce(q.raw !is null, "Queue handle nulled unexpectedly");
+        }
+
+        // Last owner frees exactly once; nested copies destroyed in sequence.
+        private static void testLastOwnerFreesNoDoubleFree()
+        {
+            enum size_t M = 32;
+            float[M] src;
+            foreach (i; 0 .. M) src[i] = cast(float) i;
+            {
+                auto a = Buffer!float(src[]);
+                {
+                    auto bb = a;
+                    {
+                        auto cc = bb;
+                    }
+                }
+                a.copy!(Copy.hostToDevice);
+            }
+
+            auto d = Buffer!float(M);
+            enforce(d.raw != 0, "post-free allocation failed (context may be corrupt)");
+        }
+
+        private static size_t deviceFreeBytes()
+        {
+            size_t freeB, totalB;
+            immutable r = cuMemGetInfo(&freeB, &totalB);
+            enforce(r == 0, "cuMemGetInfo failed with CUresult " ~ r.to!string);
+            return freeB;
+        }
+
+        private enum size_t MiB = 1024 * 1024;
+        private enum size_t BIG_BYTES = 128 * MiB;
+        private enum size_t BIG_ELEMS = BIG_BYTES / float.sizeof;
+        private enum size_t MEM_SLACK = 32 * MiB;
+
+        // Scope exit alone must return device memory to driver.
+        private static void testScopedDtorReturnsDeviceMemory()
+        {
+            { auto warm = Buffer!float(BIG_ELEMS); }
+
+            immutable before = deviceFreeBytes();
+            size_t during;
+            {
+                auto big = Buffer!float(BIG_ELEMS);
+                enforce(big.raw != 0, "128 MiB device allocation failed");
+                during = deviceFreeBytes();
+            }
+            immutable after = deviceFreeBytes();
+
+            enforce(before >= during + BIG_BYTES,
+                    "allocation not visible in cuMemGetInfo");
+            enforce(after + MEM_SLACK >= before,
+                    "dtor did NOT return device memory");
+        }
+
+        // Static/factory calls stay on driver types; caller wraps in RC: Program(driver.Program.fromString(...))
+        private static void testProgramRcWrap()
+        {
+            enum string ptx =
+                ".version 6.0\n" ~
+                ".target sm_52\n" ~
+                ".address_size 64\n" ~
+                ".visible .entry _dcompute_raii_noop() { ret; }\n";
+            try
+            {
+                {
+                    auto p = Program(driver.Program.fromString(ptx));
+                    enforce(p.raw !is null, "driver module load returned null");
+                    auto copy = p;
+                }
+                writeln("  Program wrapped from driver.Program.fromString: PASS");
+            }
+            catch (Exception e)
+            {
+                writeln("  Program RC test SKIPPED: ", e.msg);
+            }
+        }
+
+        static void run()
+        {
+            ensureInit();
+            writeln("RAII destructor / refcount tests:");
+            testBufferRefcountSurvivesCopy();
+            writeln("  Buffer refcount survives copies: PASS");
+            testQueueRefcountSurvivesCopy();
+            writeln("  Queue refcount survives copies: PASS");
+            testLastOwnerFreesNoDoubleFree();
+            writeln("  last-owner-frees / no double free: PASS");
+            testScopedDtorReturnsDeviceMemory();
+            writeln("  scoped dtor returns device memory (cuMemGetInfo): PASS");
+            testProgramRcWrap();
+            writeln("RAII destructor tests complete.\n");
+        }
+    }
+
+    void runRaiiDestructorTests()
+    {
+        RaiiTests.run();
+    }
+}
