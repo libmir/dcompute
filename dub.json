@@ -35,5 +35,12 @@
             "targetType": "executable",
             "versions": ["DComputeTestOpenCL"],
         },
+        {
+            "name": "test-directx",
+            "dflags" : ["--mdcompute-targets=directx-660", "-oq"],
+            "targetType": "executable",
+            "stringImportPaths": ["."],
+            "versions": ["DComputeTestDirectX", "LDC_DCompute_DirectX", "DComputeDirectX_660"],
+        },
     ]
 }

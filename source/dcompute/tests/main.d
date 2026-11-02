@@ -15,16 +15,18 @@ import std.exception : enforce;
 import std.experimental.allocator;
 import std.array;
 import std.typecons;
-import std.conv : to;
-import std.math.traits : isNaN;
-
-import dcompute.tests.dummykernels : saxpy;
+import dcompute.tests.dummykernels : saxpy, abi_test, ComplexScalar;
 
 version(DComputeTestOpenCL)
     import dcompute.driver.ocl;
 else version(DComputeTestCUDA) {
     import dcompute.driver.cuda.unified_buffer;
     import dcompute.driver.cuda;
+}
+else version(DComputeTestDirectX) {
+    import dcompute.driver.d3d12.unified_buffer;
+    import dcompute.driver.d3d12.image;
+    import dcompute.driver.d3d12;
 }
 else
     static assert(false, "Need to test something!");
@@ -228,6 +230,186 @@ int main(string[] args)
             writeln("DCompute injected-PTX tests (fromModule / launch!) require LDC >= 1.43 " ~
                     "(D frontend __VERSION__ >= 2113); this compiler reports an older " ~
                     "__VERSION__ — skipping the CUDA embedded-PTX tests.");
+            return 0;
+        }
+    }
+
+    version(DComputeTestDirectX)
+    {
+        static if (__VERSION__ >= 2113)
+        {
+            // 0. Hardware Capabilities Discovery
+            {
+                writeln("=== D3D12 Hardware Capabilities ===");
+                Platform.initialise();
+                auto devs = Platform.getDevices();
+                auto dev = devs.length > 0 ? devs[0] : Platform.getWarpDevice();
+
+                auto devInfo = dev.info;
+                writefln("  Adapter:            %s", devInfo.description);
+                writefln("  Vendor ID:          0x%04X", devInfo.vendorId);
+                writefln("  VRAM:               %d MB", devInfo.dedicatedVideoMemory / (1024*1024));
+
+                auto sm = dev.highestShaderModel;
+                writefln("  Highest SM:         %d.%d", sm >> 4, sm & 0xF);
+                writefln("  Binding Tier:       %d", dev.resourceBindingTier);
+                writefln("  Bindless (SM 6.6):  %s", dev.supportsBindless ? "YES" : "NO");
+                writefln("  Wave Intrinsics:    %s", dev.supportsWaveIntrinsics ? "YES" : "NO");
+                writefln("  Unified Memory:     %s", dev.supportsUnifiedMemory ? "YES" : "NO");
+                writeln("===================================\n");
+            }
+
+            // 1. Manual test
+            {
+
+                // D3D12 uses embedded DXIL blob
+                Program.globalProgram = Program.fromModule!("dcompute.tests.dummykernels")();
+                auto q = Queue(false);
+                scope(exit) q.release();
+
+                Buffer!(float) b_res, b_x, b_y;
+                b_res = Buffer!(float)(res[]); scope(exit) b_res.release();
+                b_x   = Buffer!(float)(x[]);   scope(exit) b_x.release();
+                b_y   = Buffer!(float)(y[]);   scope(exit) b_y.release();
+
+                b_x.copy!(Copy.hostToDevice);
+                b_y.copy!(Copy.hostToDevice);
+
+                auto e = q.enqueue!(saxpy)([N,1,1],[1,1,1])(b_res, alpha, b_x, b_y, N);
+                q.wait(e); // test GPU-side sync
+                
+                b_res.copy!(Copy.deviceToHost);
+                q.finish(); // Ensure all transfers are done
+
+                // Validate
+                foreach(i; 0 .. N) enforce(res[i] == alpha * x[i] + y[i], "D3D12 Standard Buffer copy failed!");
+                res[] = 0.0f; // reset
+                Program.globalProgram.unload();
+                Program.globalProgram = Program();
+            }
+
+            // 2. Launch / USM test
+            {
+                Buffer!(float) b_res, b_x, b_y;
+                b_res = Buffer!(float)(res[]); scope(exit) b_res.release();
+                b_x   = Buffer!(float)(x[]);   scope(exit) b_x.release();
+                b_y   = Buffer!(float)(y[]);   scope(exit) b_y.release();
+
+                b_x.copy!(Copy.hostToDevice);
+                b_y.copy!(Copy.hostToDevice);
+        
+                launch!saxpy([N,1,1],[1,1,1], b_res, alpha, b_x, b_y, N);
+                b_res.copy!(Copy.deviceToHost);
+
+                defaultQueue().finish();
+
+                foreach(i; 0 .. N) enforce(res[i] == alpha * x[i] + y[i], "D3D12 Launch wrapper failed!");
+                res[] = 0.0f; // reset
+
+                // Unified Memory test
+                if (defaultDevice().supportsUnifiedMemory)
+                {
+                    writeln("\nDevice supports Unified Memory — running UnifiedBuffer test...");
+
+                    auto ub_x   = UnifiedBuffer!float(x[]);   scope(exit) ub_x.release();
+                    auto ub_y   = UnifiedBuffer!float(y[]);   scope(exit) ub_y.release();
+                    auto ub_res = UnifiedBuffer!float(N);     scope(exit) ub_res.release();
+
+                    launch!saxpy([N,1,1],[1,1,1], ub_res, alpha, ub_x, ub_y, N);
+                    defaultQueue().finish(); // synchronize
+
+                    foreach (i; 0 .. N)
+                        enforce(ub_res.hostSlice[i] == alpha * x[i] + y[i],
+                                "D3D12 Unified Memory verification failed!");
+
+                    writeln("D3D12 UnifiedBuffer test PASSED.");
+                }
+                else
+                {
+                    writeln("\nDevice does not support Unified Memory — skipping UnifiedBuffer test.");
+                }
+            }
+
+            // 3. ABI Packing Test
+            {
+                writeln("\nRunning ABI Test...");
+                int scalar1 = 5;
+                ComplexScalar scalar2 = ComplexScalar(1.5f, 2.5f, 10);
+                float scalar3 = 42.0f;
+                
+                float[N] host_buf0;
+                int[N] host_buf1;
+                float[N] host_buf2;
+                
+                Buffer!(float) buf0 = Buffer!(float)(host_buf0[]); scope(exit) buf0.release();
+                Buffer!(int) buf1   = Buffer!(int)(host_buf1[]);   scope(exit) buf1.release();
+                Buffer!(float) buf2 = Buffer!(float)(host_buf2[]); scope(exit) buf2.release();
+                
+                launch!abi_test([N,1,1],[1,1,1], scalar1, buf0, scalar2, buf1, scalar3, buf2, N);
+                
+                buf0.copy!(Copy.deviceToHost);
+                buf1.copy!(Copy.deviceToHost);
+                buf2.copy!(Copy.deviceToHost);
+                defaultQueue().finish();
+                
+                foreach(i; 0 .. N) {
+                    enforce(host_buf0[i] == scalar2.x + scalar2.y + scalar3, "ABI Test failed at buf0!");
+                    enforce(host_buf1[i] == scalar1 + scalar2.z, "ABI Test failed at buf1!");
+                }
+                writeln("D3D12 ABI Test PASSED.");
+            }
+
+            // 4. Auto Index Test
+            {
+                writeln("\nRunning Auto Index Test...");
+                float[N] host_a, host_b, host_c;
+                foreach(i; 0 .. N) { host_b[i] = i; host_c[i] = i * 2.0f; }
+                
+                Buffer!(float) buf_a = Buffer!(float)(host_a[]); scope(exit) buf_a.release();
+                Buffer!(float) buf_b = Buffer!(float)(host_b[]); scope(exit) buf_b.release();
+                Buffer!(float) buf_c = Buffer!(float)(host_c[]); scope(exit) buf_c.release();
+                
+                buf_b.copy!(Copy.hostToDevice);
+                buf_c.copy!(Copy.hostToDevice);
+                
+                import dcompute.tests.dummykernels : auto_index_test;
+                launch!auto_index_test([N,1,1],[1,1,1], buf_a, buf_b, buf_c);
+                
+                buf_a.copy!(Copy.deviceToHost);
+                defaultQueue().finish();
+                
+                foreach(i; 0 .. N) {
+                    enforce(host_a[i] == host_b[i] + host_c[i], "Auto Index Test failed!");
+                }
+                writeln("D3D12 Auto Index Test PASSED.");
+            }
+
+            // 5. Image ABI Test
+            {
+                writeln("\nRunning Image ABI Test...");
+                import dcompute.tests.dummykernels : image_test, Texture2D;
+                
+                float[N] host_out;
+                Buffer!(float) buf_out = Buffer!(float)(host_out[]); scope(exit) buf_out.release();
+                
+                Texture2D!float dummyTex;
+                dummyTex.dummy = 0;
+                
+                launch!image_test([N,1,1],[1,1,1], dummyTex, buf_out, N, 1);
+                
+                buf_out.copy!(Copy.deviceToHost);
+                defaultQueue().finish();
+                
+                foreach(i; 0 .. N) {
+                    enforce(host_out[i] == 1.0f, "Image ABI Test failed!");
+                }
+                writeln("D3D12 Image ABI Test PASSED.");
+            }
+        }
+        else
+        {
+            writeln("DCompute injected-DXIL tests require LDC >= 1.43 " ~
+                    "(D frontend __VERSION__ >= 2113).");
             return 0;
         }
     }

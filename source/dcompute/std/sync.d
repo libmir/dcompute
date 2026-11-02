@@ -5,6 +5,7 @@ import ldc.intrinsics;
 
 import ocl  = dcompute.std.opencl.sync;
 import cuda = dcompute.std.cuda.sync;
+import dx   = dcompute.std.directx.sync;
 
 //suspends work-item execution until all work-items in the work-group have called the barrier
 void barrier()()
@@ -18,6 +19,8 @@ void barrier()()
             cuda.barrier0();
         }
     }
+    if(__dcompute_reflect(ReflectTarget.DirectX))
+        dx.barrier();
 }
 
 void local_fence()
@@ -26,6 +29,8 @@ void local_fence()
         ocl.mem_fence(ocl.CLK_LOCAL_MEM_FENCE);
     if(__dcompute_reflect(ReflectTarget.CUDA))
         cuda.membar_cta();
+    if(__dcompute_reflect(ReflectTarget.DirectX))
+        dx.local_fence();
 }
 // A global fence implies a local fence
 void global_fence()
@@ -34,6 +39,8 @@ void global_fence()
         ocl.mem_fence(ocl.CLK_GLOBAL_MEM_FENCE);
     if(__dcompute_reflect(ReflectTarget.CUDA))
         cuda.membar_gl();
+    if(__dcompute_reflect(ReflectTarget.DirectX))
+        dx.global_fence();
 }
 
 //TODO: image fence?

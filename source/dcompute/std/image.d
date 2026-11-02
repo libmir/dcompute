@@ -1,0 +1,50 @@
+@compute(CompileFor.deviceOnly) module dcompute.std.image;
+
+import ldc.dcompute;
+import directx = dcompute.std.directx.image;
+
+// Device-side Image API
+
+struct Image1D(T)
+{
+    // The handle to the image resource on the device.
+    // For DirectX Bindless ABI, this is a 32-bit heap index.
+    uint handle;
+
+    pragma(inline, true);
+    T read(uint x)()
+    {
+        if(__dcompute_reflect(ReflectTarget.DirectX, 0))
+            return directx.dx_texture_load_1d!T(handle, x);
+        else
+            assert(0, "Backend not supported or implemented");
+    }
+}
+
+struct Image2D(T)
+{
+    uint handle;
+
+    pragma(inline, true);
+    T read(uint x, uint y)()
+    {
+        if(__dcompute_reflect(ReflectTarget.DirectX, 0))
+            return directx.dx_texture_load_2d!T(handle, x, y);
+        else
+            assert(0, "Backend not supported or implemented");
+    }
+}
+
+struct Image3D(T)
+{
+    uint handle;
+
+    pragma(inline, true);
+    T read(uint x, uint y, uint z)()
+    {
+        if(__dcompute_reflect(ReflectTarget.DirectX, 0))
+            return directx.dx_texture_load_3d!T(handle, x, y, z);
+        else
+            assert(0, "Backend not supported or implemented");
+    }
+}

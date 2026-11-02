@@ -164,6 +164,18 @@ enum Status : int {
     EGLResourceNotAcquired         = -1092,
 }
 
+/// Generic driver status codes that all backends should map to.
+enum DriverStatus {
+    success,
+    invalidValue,
+    outOfMemory,
+    deviceLost,
+    invalidContext,
+    invalidKernel,
+    notSupported,
+    unknownError
+}
+
 version (D_BetterC)
 {
     void delegate (Status) nothrow @nogc onDriverError = (Status _status) 
@@ -184,10 +196,13 @@ else
 {
     class DComputeDriverException : Exception
     {
+        DriverStatus driverStatus;
+
         this(string msg, string file = __FILE__,
              size_t line = __LINE__, Throwable next = null)
         {
             super(msg, file, line, next);
+            this.driverStatus = DriverStatus.unknownError;
         }
         
         this(Status err, string file = __FILE__, 
@@ -195,6 +210,18 @@ else
         {
             import std.conv : to;
             super(err.to!string, file, line, next);
+            // Legacy mapping fallback
+            this.driverStatus = DriverStatus.unknownError;
+        }
+
+        this(DriverStatus err, string nativeMsg = "", string file = __FILE__, 
+             size_t line = __LINE__, Throwable next = null)
+        {
+            import std.conv : to;
+            string msg = "Driver Error: " ~ err.to!string;
+            if (nativeMsg.length > 0) msg ~= " (" ~ nativeMsg ~ ")";
+            super(msg, file, line, next);
+            this.driverStatus = err;
         }
     }
     void delegate(Status) onDriverError = (Status _status) 
